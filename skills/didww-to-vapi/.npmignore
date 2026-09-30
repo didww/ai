@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.DS_Store
+tests/
+test.sh
+publish.sh
+install.sh

@@ -1,0 +1,41 @@
+{
+  "name": "didww-connect",
+  "version": "1.0.0",
+  "description": "Connect a DIDWW phone number to ANY AI voice platform: helps choose the platform, then wires the SIP trunk pair and number.",
+  "bin": {
+    "didww-connect": "bin/install.js"
+  },
+  "type": "commonjs",
+  "engines": {
+    "node": ">=16.7.0"
+  },
+  "files": [
+    "bin/",
+    "SKILL.md",
+    "scripts/",
+    "references/",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "agent-skill",
+    "skill",
+    "didww",
+    "sip",
+    "voice-ai",
+    "telephony",
+    "voice-agent"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/didww/ai.git",
+    "directory": "skills/didww-connect"
+  },
+  "homepage": "https://github.com/didww/ai/tree/main/skills/didww-connect#readme",
+  "bugs": {
+    "url": "https://github.com/didww/ai/issues"
+  },
+  "license": "MIT"
+}

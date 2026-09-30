@@ -1,0 +1,40 @@
+{
+  "name": "didww-to-xai",
+  "version": "1.0.0",
+  "description": "Point a DIDWW phone number at xAI's Grok voice over SIP.",
+  "bin": {
+    "didww-to-xai": "bin/install.js"
+  },
+  "type": "commonjs",
+  "engines": {
+    "node": ">=16.7.0"
+  },
+  "files": [
+    "bin/",
+    "SKILL.md",
+    "scripts/",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "agent-skill",
+    "skill",
+    "didww",
+    "sip",
+    "voice-ai",
+    "telephony",
+    "xai"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/didww/ai.git",
+    "directory": "skills/didww-to-xai"
+  },
+  "homepage": "https://github.com/didww/ai/tree/main/skills/didww-to-xai#readme",
+  "bugs": {
+    "url": "https://github.com/didww/ai/issues"
+  },
+  "license": "MIT"
+}

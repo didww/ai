@@ -1,0 +1,40 @@
+{
+  "name": "didww-to-retell",
+  "version": "1.0.0",
+  "description": "Connect a DIDWW phone number to a Retell AI agent over custom telephony, with full MCP automation: Retell's official MCP can create agents AND import numbers.",
+  "bin": {
+    "didww-to-retell": "bin/install.js"
+  },
+  "type": "commonjs",
+  "engines": {
+    "node": ">=16.7.0"
+  },
+  "files": [
+    "bin/",
+    "SKILL.md",
+    "scripts/",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "agent-skill",
+    "skill",
+    "didww",
+    "sip",
+    "voice-ai",
+    "telephony",
+    "retell"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/didww/ai.git",
+    "directory": "skills/didww-to-retell"
+  },
+  "homepage": "https://github.com/didww/ai/tree/main/skills/didww-to-retell#readme",
+  "bugs": {
+    "url": "https://github.com/didww/ai/issues"
+  },
+  "license": "MIT"
+}

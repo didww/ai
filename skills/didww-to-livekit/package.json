@@ -1,0 +1,40 @@
+{
+  "name": "didww-to-livekit",
+  "version": "1.0.0",
+  "description": "Connect a DIDWW phone number to a LiveKit Agents worker over SIP, on LiveKit Cloud or self-hosted: inbound trunk, dispatch rule to a named agent, optional outbound trunk.",
+  "bin": {
+    "didww-to-livekit": "bin/install.js"
+  },
+  "type": "commonjs",
+  "engines": {
+    "node": ">=16.7.0"
+  },
+  "files": [
+    "bin/",
+    "SKILL.md",
+    "scripts/",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "agent-skill",
+    "skill",
+    "didww",
+    "sip",
+    "voice-ai",
+    "telephony",
+    "livekit"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/didww/ai.git",
+    "directory": "skills/didww-to-livekit"
+  },
+  "homepage": "https://github.com/didww/ai/tree/main/skills/didww-to-livekit#readme",
+  "bugs": {
+    "url": "https://github.com/didww/ai/issues"
+  },
+  "license": "MIT"
+}

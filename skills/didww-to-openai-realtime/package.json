@@ -1,0 +1,40 @@
+{
+  "name": "didww-to-openai-realtime",
+  "version": "1.0.0",
+  "description": "Point a DIDWW phone number directly at OpenAI's Realtime API over SIP, with a generated webhook backend for call control.",
+  "bin": {
+    "didww-to-openai-realtime": "bin/install.js"
+  },
+  "type": "commonjs",
+  "engines": {
+    "node": ">=16.7.0"
+  },
+  "files": [
+    "bin/",
+    "SKILL.md",
+    "scripts/",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "agent-skill",
+    "skill",
+    "didww",
+    "sip",
+    "voice-ai",
+    "telephony",
+    "openai"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/didww/ai.git",
+    "directory": "skills/didww-to-openai-realtime"
+  },
+  "homepage": "https://github.com/didww/ai/tree/main/skills/didww-to-openai-realtime#readme",
+  "bugs": {
+    "url": "https://github.com/didww/ai/issues"
+  },
+  "license": "MIT"
+}

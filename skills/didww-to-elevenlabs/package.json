@@ -1,0 +1,40 @@
+{
+  "name": "didww-to-elevenlabs",
+  "version": "1.0.0",
+  "description": "Connect a DIDWW phone number to an ElevenLabs voice agent over SIP, as automatically as both platforms allow.",
+  "bin": {
+    "didww-to-elevenlabs": "bin/install.js"
+  },
+  "type": "commonjs",
+  "engines": {
+    "node": ">=16.7.0"
+  },
+  "files": [
+    "bin/",
+    "SKILL.md",
+    "scripts/",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "agent-skill",
+    "skill",
+    "didww",
+    "sip",
+    "voice-ai",
+    "telephony",
+    "elevenlabs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/didww/ai.git",
+    "directory": "skills/didww-to-elevenlabs"
+  },
+  "homepage": "https://github.com/didww/ai/tree/main/skills/didww-to-elevenlabs#readme",
+  "bugs": {
+    "url": "https://github.com/didww/ai/issues"
+  },
+  "license": "MIT"
+}
