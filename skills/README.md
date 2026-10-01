@@ -1,21 +1,11 @@
 # Skills
 
+The nine skills, one folder each. The table of skills, install instructions and requirements are in the [root README](../README.md); this page covers the folder itself.
+
 Claude Code skills that put an AI voice agent on a DIDWW phone number. One hub skill picks
 the platform and does the universal DIDWW wiring (number, inbound and outbound SIP trunks,
 digest auth, spend limits, verification calls); eight pairing skills cover one voice platform
 each, as automatically as that platform's API and MCP allow.
-
-| Skill | Platform | Install | What it does |
-|---|---|---|---|
-| [didww-connect](didww-connect) | any platform (hub) | `npx didww-connect` | Connect a DIDWW phone number to ANY AI voice platform: helps choose the platform, then wires the SIP trunk pair and number. |
-| [didww-to-elevenlabs](didww-to-elevenlabs) | ElevenLabs | `npx didww-to-elevenlabs` | Connect a DIDWW phone number to an ElevenLabs voice agent over SIP, as automatically as both platforms allow. |
-| [didww-to-vapi](didww-to-vapi) | Vapi | `npx didww-to-vapi` | Connect a DIDWW phone number to a Vapi assistant over BYO SIP trunking, as automatically as Vapi allows. |
-| [didww-to-retell](didww-to-retell) | Retell | `npx didww-to-retell` | Connect a DIDWW phone number to a Retell AI agent over custom telephony, with full MCP automation: Retell's official MCP can create agents AND import numbers. |
-| [didww-to-ultravox](didww-to-ultravox) | Ultravox | `npx didww-to-ultravox` | Connect a DIDWW phone number to an Ultravox Realtime voice agent over SIP. |
-| [didww-to-vogent](didww-to-vogent) | Vogent | `npx didww-to-vogent` | Connect a DIDWW phone number to a Vogent voice agent over SIP import. |
-| [didww-to-openai-realtime](didww-to-openai-realtime) | OpenAI Realtime | `npx didww-to-openai-realtime` | Point a DIDWW phone number directly at OpenAI's Realtime API over SIP, with a generated webhook backend for call control. |
-| [didww-to-xai](didww-to-xai) | xAI Grok | `npx didww-to-xai` | Point a DIDWW phone number at xAI's Grok voice over SIP. |
-| [didww-to-livekit](didww-to-livekit) | LiveKit | `npx didww-to-livekit` | Connect a DIDWW phone number to a LiveKit Agents worker over SIP, on LiveKit Cloud or self-hosted: inbound trunk, dispatch rule to a named agent, optional outbound trunk. |
 
 ## Install
 
@@ -50,12 +40,12 @@ skills/<name>/
 
 ## Tests
 
-From the repo root, `bash test.sh` runs every skill's checks (stdlib Python plus node, no network, no keys).
+From the repo root, `bash scripts/test.sh` runs every skill's checks (stdlib Python plus node, no network, no keys).
 GitHub Actions runs the same on every push.
 
 ## Publishing
 
-`npm login` once, then from the repo root `bash publish.sh` for all nine or `bash publish.sh didww-to-vapi`
+`npm login` once, then from the repo root `bash scripts/publish.sh` for all nine or `bash scripts/publish.sh didww-to-vapi`
 for one. Bump the `version` in that skill's `package.json` first; npm refuses to overwrite
 a published version.
 
