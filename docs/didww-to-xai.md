@@ -13,7 +13,7 @@ Use the **didww-to-xai** skill with **Claude Code** to point a DIDWW phone numbe
 
 | Side | Path the skill uses | Authentication |
 |---|---|---|
-| DIDWW: trunk, number, spend limits | DIDWW MCP `https://api.didww.com/mcp` | OAuth sign-in, no keys |
+| DIDWW: trunk, number, capacity limit | DIDWW MCP `https://api.didww.com/mcp` | OAuth sign-in, no keys |
 | xAI: number registration | REST `POST https://api.x.ai/v2/phone-numbers` via `scripts/register_number.py` | `XAI_API_KEY` |
 | Per-call session control | Your backend: webhook, then `wss://api.x.ai/v1/realtime?call_id=...` | `XAI_API_KEY`, webhook signing secret |
 
@@ -77,7 +77,7 @@ XAI_API_KEY=... python3 ~/.claude/skills/didww-to-xai/scripts/register_number.py
 All DIDWW changes go through the DIDWW MCP under your own account permissions. Claude Code asks for confirmation before each tool call unless you have allowed that tool.
 
 - **Inbound SIP trunk.** Destination `sip:{number}@sip.voice.x.ai;transport=tls`, digest authentication with the username and password from the registration. The DID is assigned to this trunk.
-- **Spend controls.** A 24-hour spend limit of 10 to 50 USD and channel limits matching the expected concurrency are set before the first call. The defaults are too high for a test agent.
+- **Spend controls.** The skill sets a capacity limit on the inbound trunk matching the expected concurrency. No DIDWW outbound trunk is used, so there is no 24-hour limit to set.
 
 ### Backend
 

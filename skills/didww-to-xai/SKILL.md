@@ -35,7 +35,9 @@ offer the hosted platforms if the user cannot run a small backend.
    backend's environment.
 3. **DIDWW side (MCP, OAuth):** inbound trunk with destination
    `sip:{number}@sip.voice.x.ai;transport=tls`, digest auth from step 2.
-   Attach the DID, set spend limits.
+   Attach the DID. Set `capacity_limit` = expected concurrent calls (it caps
+   how many calls run at once, and so the cost). No DIDWW outbound trunk
+   is involved, so there is no 24-hour limit to set.
 4. **Backend:** on the incoming-call webhook (carries `call_id`),
    connect `wss://api.x.ai/v1/realtime?call_id={call_id}` and send
    `session.update` with voice, instructions and turn detection. Call

@@ -10,7 +10,8 @@ Use the **didww-to-ultravox** skill with **Claude Code** to connect a DIDWW phon
 
 | Side | Path the skill uses | Authentication |
 |---|---|---|
-| DIDWW: trunks, number, spend limits | DIDWW MCP `https://api.didww.com/mcp` | OAuth sign-in, no keys |
+| DIDWW: number, inbound trunk | DIDWW MCP `https://api.didww.com/mcp` | OAuth sign-in, no keys |
+| DIDWW: outbound trunk, spend limits | You, in the DIDWW User Panel. The MCP has no outbound trunk tools | Your panel login |
 | Ultravox: account SIP settings (`GET` and `PATCH /api/sip`) | REST via `scripts/connect.py` | `ULTRAVOX_API_KEY` (`X-API-Key` header) |
 
 Ultravox has no official MCP. Two routing shapes exist, and the skill asks which one you need:
@@ -81,11 +82,11 @@ ULTRAVOX_API_KEY=... python3 ~/.claude/skills/didww-to-ultravox/scripts/connect.
 
 ### DIDWW side
 
-All DIDWW changes go through the DIDWW MCP under your own account permissions. Claude Code asks for confirmation before each tool call unless you have allowed that tool.
+The number and the inbound trunk are configured through the DIDWW MCP under your own account permissions. Claude Code asks for confirmation before each tool call unless you have allowed that tool. The outbound trunk is created by you in the DIDWW User Panel, because the MCP has no outbound trunk tools.
 
 - **Inbound SIP trunk.** Destination is the account SIP domain, with the destination user part chosen per the routing shape: the agent address for one agent per number, or the dialed number for the fallback shape. The DID is assigned to this trunk.
-- **Outbound SIP trunk.** Created for this connection. DIDWW generates the username and password; the host is the one nearest to the platform's region: `fra.eu.out.didww.com`, `ams.eu.out.didww.com`, `nyc.us.out.didww.com` or `sg.out.didww.com`. The agent passes these credentials to the platform side.
-- **Spend controls.** A 24-hour spend limit of 10 to 50 USD and channel limits matching the expected concurrency are set before the first call. The defaults are too high for a test agent.
+- **Outbound SIP trunk.** Needed only for calls the agent places. You create it in the DIDWW User Panel under **Voice**, **Outbound Trunks**, **Create New**, because the DIDWW MCP has no outbound trunk tools. If that page shows **Get Access**, the account is not approved for outbound calling yet: the application needs a business account with a company name and VAT/TAX ID, and DIDWW replies within 48 business hours. The inbound side can go live meanwhile. Choose the **Credentials & IP-Based** authentication method. It needs at least one **Allowed SIP IP address**: Ultravox publishes no SIP source range (its SIP runs on Voximplant); ask Ultravox support for the source addresses, or contact DIDWW support (support@didww.com). Do not enter `0.0.0.0/0`; DIDWW advises against open ranges. Set **Media encryption mode** to match the platform side. DIDWW generates the username and password; give them to the agent in a file or environment variables rather than pasting them into the chat, and it passes them to the platform side. Enable the trunk if it shows **Disabled**. The host is the one nearest to the platform's region: `nyc.us.out.didww.com`, `lac.us.out.didww.com`, `mia.us.out.didww.com`, `fra.eu.out.didww.com`, `ams.eu.out.didww.com`, `sg.out.didww.com` or `hk.out.didww.com`.
+- **Spend controls.** On the outbound trunk, under **Termination**: **24 Hour Limit (USD)** at its minimum of 50 (the default is 3000, and DIDWW disables the trunk when the limit is reached), **Capacity limit** matching the expected concurrency, and the usage limit notification on. Under **CLI Settings**, allow only the connected number as caller ID; under **Destination Dialing Settings**, reject all destinations except the countries the agent calls. On the inbound trunk the skill sets a capacity limit through the MCP.
 
 ## Step 4. Verify the connection
 
@@ -104,6 +105,7 @@ The skill carries this failure map and works through it when a test call fails.
 | Inbound 603 rejected | The To address matches no allowed agent and no fallback handler is set | Fix the `allowedAgents` pattern or add the fallback URL |
 | Inbound never arrives | The CIDR allowlist is missing DIDWW's signaling range, or the trunk sends the dialed number as user part while routing expected an agent address | Add the range; switch to the fallback shape |
 | Outbound authentication failures | Credentials in `medium.sip.outgoing` do not match the DIDWW outbound trunk | Use the DIDWW outbound trunk's generated username and password |
+| Outbound call rejected by DIDWW | Source IP not in the outbound trunk's Allowed SIP IP addresses, caller ID not allowed in its CLI settings, destination not allowed, or the 24-hour limit reached, which disables the trunk | Check the outbound trunk in the DIDWW User Panel and re-enable it |
 
 ## Keys, billing and safety
 

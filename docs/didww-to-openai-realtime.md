@@ -13,7 +13,7 @@ Use the **didww-to-openai-realtime** skill with **Claude Code** to point a DIDWW
 
 | Side | Path the skill uses | Authentication |
 |---|---|---|
-| DIDWW: trunk, number, spend limits | DIDWW MCP `https://api.didww.com/mcp` | OAuth sign-in, no keys |
+| DIDWW: trunk, number, capacity limit | DIDWW MCP `https://api.didww.com/mcp` | OAuth sign-in, no keys |
 | OpenAI: project webhook for `realtime.call.incoming` | Platform settings (manual) | Your OpenAI sign-in |
 | Call control: accept, reject, transfer | `scripts/webhook_server.py` | `OPENAI_API_KEY`, `OPENAI_WEBHOOK_SECRET` |
 
@@ -70,7 +70,7 @@ In the platform settings at `platform.openai.com/settings/project/webhooks`, cre
 All DIDWW changes go through the DIDWW MCP under your own account permissions. Claude Code asks for confirmation before each tool call unless you have allowed that tool.
 
 - **Inbound SIP trunk.** Destination `sip:{project_id}@sip.api.openai.com;transport=tls`, port 5061, TLS signaling and SRTP media, both required. For EU data residency the host is `sip-eu.api.openai.com`. The DID is assigned to this trunk.
-- **Spend controls.** A 24-hour spend limit of 10 to 50 USD and channel limits matching the expected concurrency are set before the first call. The defaults are too high for a test agent.
+- **Spend controls.** The skill sets a capacity limit on the inbound trunk matching the expected concurrency. No DIDWW outbound trunk is used, so there is no 24-hour limit to set.
 
 > [!NOTE]
 > OpenAI's SIP endpoint has no digest authentication. The webhook's accept or reject decision is the authentication gate, which is why the generated backend rejects calls to unknown numbers by default. Anyone can send an INVITE to the URI; keep that rejection in place.

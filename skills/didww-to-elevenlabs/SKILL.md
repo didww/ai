@@ -19,7 +19,8 @@ automatable through OAuth MCPs, so prefer that path.
 
 | Side | Best path | Auth |
 |---|---|---|
-| DIDWW (trunks, DID, spend limits) | DIDWW MCP `https://api.didww.com/mcp` | OAuth, no keys |
+| DIDWW (DID, inbound trunk) | DIDWW MCP `https://api.didww.com/mcp` | OAuth, no keys |
+| DIDWW outbound trunk, 24-hour spend limit | The user, in the DIDWW panel: the MCP has no outbound trunk tools | Panel login |
 | ElevenLabs agent create/config, number-to-agent assignment | ElevenLabs hosted MCP `https://api.elevenlabs.io/v1/mcp` | OAuth, no keys |
 | ElevenLabs number IMPORT (the one gap: not in their MCP) | REST `POST /v1/convai/phone-numbers` via `scripts/import_number.py` | one `xi-api-key`, or a guided dashboard step |
 
@@ -36,11 +37,28 @@ and have the user authenticate once in `/mcp`.
    `sip.rtc.elevenlabs.io`, port 5060, transport TCP (TLS supported;
    match media encryption on both sides), digest auth with an invented
    username/password pair (preferred over IP filtering: ElevenLabs egress
-   IPs are distributed; static IPs are enterprise-only). Attach the DID.
-   Create the outbound trunk, note its generated credentials and the
-   region-nearest host (`fra.eu.out.didww.com`, `ams.eu.out.didww.com`,
-   `nyc.us.out.didww.com`...). Set the 24h spend limit to 10 to 50 USD
-   and honest channel caps; never leave defaults.
+   IPs are distributed; static IPs are enterprise-only). Set
+   `capacity_limit` to the expected concurrent calls. Attach the DID.
+   **Outbound trunk (DIDWW panel, the user does it):** only if the agent
+   places calls. Under Voice, Outbound Trunks a Get Access button means
+   the account is not approved yet (business account with company name
+   and VAT/TAX ID; DIDWW answers within 48 business hours): say so and
+   finish the inbound side meanwhile. Create New, Authentication method
+   Credentials & IP-Based, which needs at least one Allowed SIP IP.
+   ElevenLabs publishes no SIP egress range for the standard endpoint;
+   Enterprise static SIP (`sip-static.rtc.elevenlabs.io`) comes with a
+   /24 to list. Without it, send the user to DIDWW support
+   (support@didww.com); never invent a range or suggest `0.0.0.0/0`.
+   Termination: 24 Hour Limit (USD) at its minimum, 50 (default 3000),
+   Capacity limit = expected concurrency, usage limit notification on;
+   CLI limited to the DID; Destination dialing Reject All except the
+   countries the agent calls; Media encryption mode matching the
+   import. Enable the trunk if it shows Disabled. Host: the
+   region-nearest of `fra.eu.out.didww.com`, `ams.eu.out.didww.com`,
+   `nyc.us.out.didww.com`, `lac.us.out.didww.com`,
+   `mia.us.out.didww.com`, `sg.out.didww.com`, `hk.out.didww.com`. The
+   user hands the generated credentials over in a file or environment
+   variables, not pasted into chat.
 3. **Agent (ElevenLabs MCP):** create or select the agent, set voice,
    language and prompt.
 4. **Import the number:** run `scripts/import_number.py` (or walk the
@@ -62,8 +80,12 @@ and have the user authenticate once in `/mcp`.
   only).
 - Outbound dead: `sip:` prefix or a port pasted into the Address field,
   or wrong region host.
-- Everything works but money leaks: default spend limits were kept; go
-  back to step 2.
+- Outbound 403 or rejected from DIDWW: source IP not in the outbound
+  trunk's Allowed SIP IPs, caller ID not allowed in its CLI settings,
+  destination not allowed, or the 24 Hour Limit was reached (DIDWW then
+  disables the trunk; re-enable it in the panel).
+- Everything works but money leaks: the outbound trunk kept its 3000 USD
+  default limit; lower it to 50 in the panel.
 
 ## Panel map and money
 
@@ -82,4 +104,4 @@ Billing, Payment Methods.
 
 Built around [DIDWW](https://www.didww.com/?ref=didww-to-elevenlabs) SIP
 trunking and ElevenLabs' published SIP interconnect; both sides' guidance
-verified August 2026.
+verified August 2026, DIDWW outbound trunk rules October 2026.

@@ -1,6 +1,6 @@
 {
   "name": "didww-to-xai",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Point a DIDWW phone number at xAI's Grok voice over SIP.",
   "bin": {
     "didww-to-xai": "bin/install.js"

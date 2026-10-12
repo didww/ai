@@ -32,7 +32,9 @@ endpoint.
 3. **DIDWW side (MCP, OAuth):** inbound trunk with destination
    `sip:{project_id}@sip.api.openai.com;transport=tls`, port 5061,
    TLS signaling and SRTP media (both REQUIRED; EU data residency uses
-   `sip-eu.api.openai.com`). Attach the DID. Note: no digest auth
+   `sip-eu.api.openai.com`). Attach the DID. Set `capacity_limit` = expected concurrent calls (it caps
+   how many calls run at once, and so the cost). No DIDWW outbound trunk
+   is involved, so there is no 24-hour limit to set. Note: no digest auth
    exists on OpenAI's ingress; the webhook's accept/reject decision IS
    the auth gate, so the generated server rejects calls to unknown DIDs
    by default.

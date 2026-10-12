@@ -2,6 +2,18 @@
 
 All notable changes to the skills in this repository. Each skill is versioned independently in its `package.json`.
 
+## All nine skills: DIDWW outbound trunk and spend limits corrected (2026-10-12)
+
+`didww-connect` 1.0.1, `didww-to-livekit` 1.1.0 (both together with the changes below), and 1.0.1 of `didww-to-elevenlabs`, `didww-to-vapi`, `didww-to-retell`, `didww-to-ultravox`, `didww-to-vogent`, `didww-to-openai-realtime` and `didww-to-xai`. Checked against the DIDWW outbound trunk documentation.
+
+- The DIDWW MCP has no outbound trunk tools, so every skill and doc page now says the user creates the DIDWW outbound trunk in the DIDWW User Panel (Voice, Outbound Trunks, Create New) and hands its credentials over in a file or environment variables. The MCP still covers the number and the inbound trunk.
+- The recommended 24-hour spend limit of 10 to 50 USD was impossible: the outbound trunk's **24 Hour Limit (USD)** has a minimum of 50 and a default of 3000. The skills now set it to 50, with a capacity limit, the usage notification, caller ID limited to the DID and destinations limited to the countries the agent calls.
+- Outbound access needs DIDWW's approval first (Get Access, a business account, a reply within 48 business hours). The skills check for this before promising outbound calls. For Vapi, the whole connection waits for it.
+- The **Credentials & IP-Based** method needs at least one Allowed SIP IP. Each skill lists the platform's egress addresses where they are published (Vapi, Retell, LiveKit Cloud). Where none are published (ElevenLabs, Ultravox and Vogent outside enterprise plans), it sends the user to DIDWW support and never suggests `0.0.0.0/0`.
+- Inbound trunks get a `capacity_limit` through the MCP. OpenAI Realtime and xAI use no outbound trunk, so their skills no longer ask for a 24-hour limit.
+- Full list of DIDWW outbound hosts: `nyc.us`, `lac.us`, `mia.us`, `fra.eu`, `ams.eu`, `sg` and `hk` `.out.didww.com`.
+- New failure map entry: an outbound call rejected by DIDWW after authentication (Allowed SIP IP, caller ID, destination, or the 24-hour limit, which disables the trunk).
+
 ## didww-to-livekit 1.1.0, didww-connect 1.0.1 (2026-10-09)
 
 `didww-to-livekit`, verified end to end on LiveKit Cloud:

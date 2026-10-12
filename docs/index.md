@@ -46,8 +46,8 @@ The carrier-side wiring is identical for every platform and always runs through 
 
 1. **Number.** Buy or confirm the DID. Registration-required countries add a verification wait.
 2. **Inbound trunk.** Host set to the platform's SIP ingress, digest authentication preferred, media encryption matched to the platform. The DID is assigned to the trunk.
-3. **Outbound trunk.** Created per connection; DIDWW generates the credentials. The host nearest the platform's region is used: `fra.eu.out.didww.com`, `ams.eu.out.didww.com`, `nyc.us.out.didww.com` or `sg.out.didww.com`.
-4. **Spend controls.** A 24-hour spend limit of 10 to 50 USD and channel limits set before the first call.
+3. **Outbound trunk.** Only for agents that place calls. You create it in the DIDWW User Panel, because the DIDWW MCP has no outbound trunk tools; outbound access needs DIDWW's approval first. DIDWW generates the credentials. The host nearest the platform's region is used: `nyc.us.out.didww.com`, `lac.us.out.didww.com`, `mia.us.out.didww.com`, `fra.eu.out.didww.com`, `ams.eu.out.didww.com`, `sg.out.didww.com` or `hk.out.didww.com`.
+4. **Spend controls.** The outbound trunk's 24-hour limit at its minimum of 50 USD (the default is 3000), capacity limits on both trunks, and caller ID and destinations restricted, all before the first call.
 5. **Verification.** One inbound call from a mobile phone, one outbound call checking caller ID, one transfer if configured.
 
 > [!NOTE]

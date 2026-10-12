@@ -12,7 +12,8 @@ This skill automates the steps described in the [Vapi integration guide](https:/
 
 | Side | Path the skill uses | Authentication |
 |---|---|---|
-| DIDWW: trunks, number, spend limits | DIDWW MCP `https://api.didww.com/mcp` | OAuth sign-in, no keys |
+| DIDWW: number, inbound trunk | DIDWW MCP `https://api.didww.com/mcp` | OAuth sign-in, no keys |
+| DIDWW: outbound trunk, spend limits | You, in the DIDWW User Panel. The MCP has no outbound trunk tools | Your panel login |
 | Vapi: credential and number creation, assistant binding | REST via `scripts/connect.py` | `VAPI_API_KEY` |
 | Vapi: verification (`list_phone_numbers`, `get_call`) | Vapi MCP `https://mcp.vapi.ai/mcp` | Bearer API key; read-only for trunks and numbers |
 
@@ -62,15 +63,15 @@ The skill confirms the number (or country to buy one in), the assistant (existin
 
 ## Step 3. What gets configured
 
-The order matters, so the skill does the DIDWW outbound trunk first, then Vapi, then the DIDWW inbound trunk.
+The order matters: the DIDWW outbound trunk comes first (you create it in the DIDWW User Panel), then Vapi, then the DIDWW inbound trunk. If the account still needs DIDWW's approval for outbound trunks, the whole connection waits for it, because the Vapi credential that defines the inbound address carries the outbound credentials.
 
 ### DIDWW side
 
-All DIDWW changes go through the DIDWW MCP under your own account permissions. Claude Code asks for confirmation before each tool call unless you have allowed that tool.
+The number and the inbound trunk are configured through the DIDWW MCP under your own account permissions. Claude Code asks for confirmation before each tool call unless you have allowed that tool. The outbound trunk is created by you in the DIDWW User Panel, because the MCP has no outbound trunk tools.
 
 - **Inbound SIP trunk.** Created last. Host is the per-credential hostname printed by the script in the Vapi step, port 5060. Vapi's signaling IPs are allowed on the trunk: US `44.229.228.186` and `44.238.177.138`, EU `63.182.83.170`. Missing IPs show up as 401 responses on inbound calls. The DID is assigned to this trunk.
-- **Outbound SIP trunk.** Created for this connection. DIDWW generates the username and password; the host is the one nearest to the platform's region: `fra.eu.out.didww.com`, `ams.eu.out.didww.com`, `nyc.us.out.didww.com` or `sg.out.didww.com`. The agent passes these credentials to the platform side.
-- **Spend controls.** A 24-hour spend limit of 10 to 50 USD and channel limits matching the expected concurrency are set before the first call. The defaults are too high for a test agent.
+- **Outbound SIP trunk.** Needed only for calls the agent places. You create it in the DIDWW User Panel under **Voice**, **Outbound Trunks**, **Create New**, because the DIDWW MCP has no outbound trunk tools. If that page shows **Get Access**, the account is not approved for outbound calling yet: the application needs a business account with a company name and VAT/TAX ID, and DIDWW replies within 48 business hours. The inbound side can go live meanwhile. Choose the **Credentials & IP-Based** authentication method. It needs at least one **Allowed SIP IP address**: Vapi's signaling IPs, US `44.229.228.186/32` and `44.238.177.138/32`, EU `63.182.83.170/32`. Set **Media encryption mode** to match the platform side. DIDWW generates the username and password; give them to the agent in a file or environment variables rather than pasting them into the chat, and it passes them to the platform side. Enable the trunk if it shows **Disabled**. The host is the one nearest to the platform's region: `nyc.us.out.didww.com`, `lac.us.out.didww.com`, `mia.us.out.didww.com`, `fra.eu.out.didww.com`, `ams.eu.out.didww.com`, `sg.out.didww.com` or `hk.out.didww.com`.
+- **Spend controls.** On the outbound trunk, under **Termination**: **24 Hour Limit (USD)** at its minimum of 50 (the default is 3000, and DIDWW disables the trunk when the limit is reached), **Capacity limit** matching the expected concurrency, and the usage limit notification on. Under **CLI Settings**, allow only the connected number as caller ID; under **Destination Dialing Settings**, reject all destinations except the countries the agent calls. On the inbound trunk the skill sets a capacity limit through the MCP.
 
 ### Vapi side
 
@@ -101,6 +102,7 @@ The skill carries this failure map and works through it when a test call fails.
 | Inbound 401 | Vapi's signaling IPs are not allowed on the DIDWW trunk, or the trunk points at bare `sip.vapi.ai` instead of the per-credential host | Add the IPs; set the host to `<credential_id>.sip.vapi.ai` |
 | Outbound authentication failures | The credential's outbound authentication plan does not match the DIDWW outbound trunk | Regenerate the DIDWW credentials and re-run the script with `--update` |
 | Number rejected on create | Format check | The script disables the E.164 check; try the number without the `+` |
+| Outbound call rejected by DIDWW | Source IP not in the outbound trunk's Allowed SIP IP addresses, caller ID not allowed in its CLI settings, destination not allowed, or the 24-hour limit reached, which disables the trunk | Check the outbound trunk in the DIDWW User Panel and re-enable it |
 
 ## Keys, billing and safety
 

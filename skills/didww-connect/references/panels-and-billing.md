@@ -17,6 +17,16 @@ keys where a column says so.
   Low Balance Notification lives on the same page and is OFF by default:
   switch it on with a threshold, every time, because services and number
   renewals stop at zero balance.
+- Outbound trunks: Voice, Outbound Trunks. NOT in the MCP; the user
+  creates them in the panel. A Get Access button there means the account
+  is not approved for outbound yet (application needs a business account
+  with company name and VAT/TAX ID; DIDWW answers within 48 business
+  hours). The per-trunk 24 Hour Limit (USD) defaults to 3000, minimum
+  50, and disables the trunk when reached; Capacity limit and a usage
+  notification at 80 percent sit next to it under Termination.
+  Credentials & IP-Based authentication needs at least one Allowed SIP
+  IP. Docs: `doc.didww.com/voice/outbound-trunks/`.
+- Inbound trunks (MCP): `capacity_limit` caps concurrent calls per trunk.
 
 ## ElevenLabs
 

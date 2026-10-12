@@ -1,6 +1,6 @@
 {
   "name": "didww-to-retell",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Connect a DIDWW phone number to a Retell AI agent over custom telephony, with full MCP automation: Retell's official MCP can create agents AND import numbers.",
   "bin": {
     "didww-to-retell": "bin/install.js"

@@ -12,7 +12,7 @@ description: >
 
 # DIDWW Connect (any platform)
 
-DIDWW is the constant: number, two-way SIP trunk, spend controls. The AI
+DIDWW is the constant: number, two-way SIP trunking, spend controls. The AI
 side is a menu. This skill picks from the menu and executes the
 universal wiring; when a dedicated `didww-to-<platform>` skill is
 installed for the chosen platform, hand over to it, since it carries the
@@ -36,19 +36,45 @@ Ask what matters most and map:
 
 ## Universal DIDWW-side wiring (identical for every platform)
 
-Prefer the DIDWW MCP (`https://api.didww.com/mcp`, OAuth sign-in, no
-keys) for all of it:
+The DIDWW MCP (`https://api.didww.com/mcp`, OAuth sign-in, no keys)
+covers the number and the inbound trunk. It has NO outbound trunk
+tools: the outbound trunk, and with it the 24-hour spend limit, is
+created by the user in the DIDWW panel.
 
 1. Number: buy or confirm the DID (registration-required countries add a
    verification wait; say so before promising dates).
-2. Inbound trunk: host = the platform's SIP ingress, digest auth
-   preferred, media encryption matched to the platform's setting. Attach
-   the DID.
-3. Outbound trunk: created per connection; note the generated
-   credentials and region-nearest host (`fra.eu.out.didww.com`,
-   `ams.eu.out.didww.com`, `nyc.us.out.didww.com`, `sg.out.didww.com`).
-4. Safety: set the 24h spend limit to 10 to 50 USD and honest channel
-   caps before the first call; defaults are too high.
+2. Inbound trunk (MCP): host = the platform's SIP ingress, digest auth
+   preferred, media encryption matched to the platform's setting,
+   `capacity_limit` = the concurrent calls the user expects. Attach the
+   DID.
+3. Outbound trunk (panel, only if the agent places calls):
+   - Access first: under Voice, Outbound Trunks a Get Access button means
+     the account is not approved yet. The application needs a business
+     account (company name, VAT/TAX ID) and DIDWW answers within 48
+     business hours, so say this before promising outbound calling;
+     inbound goes live meanwhile.
+   - The user creates it under Voice, Outbound Trunks, Create New, with
+     Authentication method Credentials & IP-Based. That method needs at
+     least one Allowed SIP IP: the platform's published SIP egress
+     addresses (each pairing skill lists them). Where the platform
+     publishes none, do not invent a range and do not suggest
+     `0.0.0.0/0` (DIDWW advises against open ranges); send the user to
+     DIDWW support (support@didww.com) for that case.
+   - Termination: 24 Hour Limit (USD) at its minimum, 50 (the default is
+     3000; the trunk is disabled when the limit is reached), Capacity
+     limit = expected concurrent calls, usage limit notification on.
+     CLI: allow only the connected DID. Destination dialing: Reject All
+     except the country prefixes the agent calls. Media encryption mode
+     matched to the platform.
+   - Host: the region-nearest of `nyc.us.out.didww.com`,
+     `lac.us.out.didww.com`, `mia.us.out.didww.com`,
+     `fra.eu.out.didww.com`, `ams.eu.out.didww.com`, `sg.out.didww.com`,
+     `hk.out.didww.com`; port 5060 UDP/TCP, 5061 TLS. A new trunk can
+     show Disabled: enable it before the first call. The user hands the
+     generated username and password over in a file or environment
+     variables, not pasted into chat.
+4. Money safety: the Low Balance Notification (Billing, Payment Methods,
+   OFF by default) on, plus the limits above.
 5. Verify: one inbound call from a mobile, one outbound checking caller
    ID, one transfer if configured.
 
@@ -67,6 +93,16 @@ from Project settings, not derived from the project URL; 5060
 TCP/UDP, 5061 TLS, digest; region-pinned
 `{sip_subdomain}.{eu|us|uk|india|japan|aus|canada|sa}.sip.livekit.cloud`;
 numbers on its trunk need the `+`).
+
+Allowed SIP IPs for the DIDWW outbound trunk (the platform's egress):
+Vapi US `44.229.228.186/32`, `44.238.177.138/32`, EU `63.182.83.170/32`.
+Retell `18.98.16.120/30`, `3.42.144.0/23`, `153.57.128.0/18` (plus
+`143.223.88.0/21`, `161.115.160.0/19` for some US traffic). LiveKit
+Cloud (Canada, EU, India, Japan, US) `143.223.88.0/21`,
+`161.115.160.0/19`, `153.57.128.0/18`; self-hosted: its public IP.
+ElevenLabs, Ultravox, Vogent: no published range outside enterprise
+plans (ElevenLabs Enterprise static SIP is a /24 from their support);
+ask DIDWW support. OpenAI and xAI: no outbound trunk needed.
 
 ## Panels, keys and money
 
@@ -103,4 +139,5 @@ the companion.
 
 Built around [DIDWW](https://www.didww.com/?ref=didww-connect), a
 licensed global operator providing the numbers and two-way SIP trunking
-under all of the above; platform details verified August 2026.
+under all of the above; platform details verified August 2026, DIDWW
+outbound trunk rules October 2026.

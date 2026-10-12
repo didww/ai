@@ -88,8 +88,19 @@ trunk is created by the user in the DIDWW panel.
      list if there is one); other Cloud regions have no static range;
      self-hosted: the SIP service's public IP. Enable SRTP SDES in its
      media settings. Allow the DID as caller ID. Note host and
-     generated credentials for step 3's outbound flags. Spend limits
-     10 to 50 USD/day, honest channel caps.
+     generated credentials for step 3's outbound flags. Before Create
+     New: a Get Access button under Voice, Outbound Trunks means the
+     account is not approved yet (business account with company name
+     and VAT/TAX ID; DIDWW answers within 48 business hours); say so
+     and finish the inbound side meanwhile. Termination: 24 Hour Limit
+     (USD) at its minimum, 50 (default 3000; the trunk is disabled when
+     it is reached), Capacity limit = expected concurrency, usage limit
+     notification on; CLI limited to the DID; Destination dialing Reject
+     All except the countries the agent calls. Enable the trunk if it
+     shows Disabled. Host: the region-nearest of `nyc.us.out.didww.com`,
+     `lac.us.out.didww.com`, `mia.us.out.didww.com`,
+     `fra.eu.out.didww.com`, `ams.eu.out.didww.com`, `sg.out.didww.com`,
+     `hk.out.didww.com`.
    - NOTE, the DIDWW trunks must match the script: it creates secure
      LiveKit trunks by default (`--transport tls --srtp require`,
      both directions verified on Cloud). A DIDWW trunk left on TCP 5060
@@ -143,7 +154,9 @@ trunk is created by the user in the DIDWW panel.
   is not in the trunk's Allowed SIP IP list (ranges in step 4).
 - Outbound 484: dialed number incomplete; use full E.164 with the `+`.
 - Outbound rejected after authentication: caller ID is not a DID on the
-  account, destination not allowed, or the 24-hour limit or balance.
+  account, destination not allowed, or the balance; or the 24 Hour
+  Limit was reached, which disables the trunk (re-enable it in the
+  panel).
 - 405 when a provider tries to REGISTER: LiveKit never accepts
   registration; DIDWW does not register with a Static Endpoint trunk,
   so this only shows up if the trunk Type is Dynamic Registration or

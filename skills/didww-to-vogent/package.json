@@ -1,6 +1,6 @@
 {
   "name": "didww-to-vogent",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Connect a DIDWW phone number to a Vogent voice agent over SIP import.",
   "bin": {
     "didww-to-vogent": "bin/install.js"

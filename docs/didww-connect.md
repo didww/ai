@@ -3,7 +3,7 @@
 Use the **didww-connect** skill with **Claude Code** to put an AI voice agent on a DIDWW phone number when you have not yet chosen a voice platform. The skill compares the supported platforms against what matters to you, performs the DIDWW-side wiring that is identical for every platform, and hands over to the dedicated `didww-to-<platform>` skill once a platform is chosen.
 
 - Choose between ElevenLabs, Vapi, Retell, Ultravox, Vogent, OpenAI Realtime, xAI Grok and LiveKit in one question.
-- Configure the DIDWW number, inbound and outbound SIP trunks, digest authentication and spend controls through the DIDWW MCP.
+- Configure the DIDWW number, the inbound SIP trunk and digest authentication through the DIDWW MCP, and guide you through the outbound trunk and its spend limits in the DIDWW User Panel.
 - Monitor the finished connection with a read-only health check that runs from cron.
 
 ## How the skill works
@@ -77,11 +77,11 @@ The skill asks one question, maps the answer to a platform, and tells you the au
 
 ### DIDWW side
 
-All DIDWW changes go through the DIDWW MCP under your own account permissions. Claude Code asks for confirmation before each tool call unless you have allowed that tool.
+The number and the inbound trunk are configured through the DIDWW MCP under your own account permissions. Claude Code asks for confirmation before each tool call unless you have allowed that tool. The outbound trunk is created by you in the DIDWW User Panel, because the MCP has no outbound trunk tools.
 
 - **Inbound SIP trunk.** Host and port are the chosen platform's SIP ingress (see the table below), digest authentication is preferred over IP filtering, and media encryption matches the platform's setting. The DID is assigned to this trunk.
-- **Outbound SIP trunk.** Created for this connection. DIDWW generates the username and password; the host is the one nearest to the platform's region: `fra.eu.out.didww.com`, `ams.eu.out.didww.com`, `nyc.us.out.didww.com` or `sg.out.didww.com`. The agent passes these credentials to the platform side.
-- **Spend controls.** A 24-hour spend limit of 10 to 50 USD and channel limits matching the expected concurrency are set before the first call. The defaults are too high for a test agent.
+- **Outbound SIP trunk.** Needed only for calls the agent places. You create it in the DIDWW User Panel under **Voice**, **Outbound Trunks**, **Create New**, because the DIDWW MCP has no outbound trunk tools. If that page shows **Get Access**, the account is not approved for outbound calling yet: the application needs a business account with a company name and VAT/TAX ID, and DIDWW replies within 48 business hours. The inbound side can go live meanwhile. Choose the **Credentials & IP-Based** authentication method. It needs at least one **Allowed SIP IP address**: the platform's SIP source addresses, listed on each platform's page. Where a platform publishes none, contact DIDWW support (support@didww.com). Do not enter `0.0.0.0/0`; DIDWW advises against open ranges. Set **Media encryption mode** to match the platform side. DIDWW generates the username and password; give them to the agent in a file or environment variables rather than pasting them into the chat, and it passes them to the platform side. Enable the trunk if it shows **Disabled**. The host is the one nearest to the platform's region: `nyc.us.out.didww.com`, `lac.us.out.didww.com`, `mia.us.out.didww.com`, `fra.eu.out.didww.com`, `ams.eu.out.didww.com`, `sg.out.didww.com` or `hk.out.didww.com`.
+- **Spend controls.** On the outbound trunk, under **Termination**: **24 Hour Limit (USD)** at its minimum of 50 (the default is 3000, and DIDWW disables the trunk when the limit is reached), **Capacity limit** matching the expected concurrency, and the usage limit notification on. Under **CLI Settings**, allow only the connected number as caller ID; under **Destination Dialing Settings**, reject all destinations except the countries the agent calls. On the inbound trunk the skill sets a capacity limit through the MCP.
 - **Number.** An existing DID is confirmed, or one is bought. For registration-required countries the skill says so before promising a date.
 
 ### Platform SIP ingress addresses

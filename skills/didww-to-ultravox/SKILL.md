@@ -16,7 +16,8 @@ is ADDRESS-BASED. Calls arrive at `agent_{agent_id}@{account_sip_domain}`
 and the account's SIP settings decide what is accepted. That inverts the
 usual setup: instead of importing the number into the platform, you point
 the DIDWW trunk at the right SIP address. The DIDWW MCP (OAuth) automates
-the carrier side; `scripts/connect.py` automates the Ultravox side via
+the number and the inbound trunk (it has no outbound trunk tools: the
+user creates the DIDWW outbound trunk in the panel); `scripts/connect.py` automates the Ultravox side via
 its REST API (`X-API-Key` header).
 
 ## The two routing shapes: pick one in intake
@@ -46,10 +47,28 @@ Ultravox's model.
    note that calls are placed per call via `POST /api/calls` with
    `medium.sip.outgoing` carrying the DIDWW host and outbound trunk
    credentials.
-4. **DIDWW side (MCP):** inbound trunk pointed at the account SIP domain
-   (destination per the routing shape chosen), DID attached, outbound
-   trunk created with credentials for step 3's outgoing calls, spend
-   limits set (10 to 50 USD/day).
+4. **DIDWW inbound trunk (MCP):** pointed at the account SIP domain
+   (destination per the routing shape chosen), `capacity_limit` =
+   expected concurrent calls, DID attached.
+   **DIDWW outbound trunk (panel, the user does it, only for outgoing
+   calls):** Under Voice, Outbound Trunks a Get Access button means the account is
+   not approved yet (business account with company name and VAT/TAX ID;
+   DIDWW answers within 48 business hours): say so and finish the
+   inbound side meanwhile. Create New,
+   Authentication method Credentials & IP-Based, which needs at least
+   one Allowed SIP IP. Ultravox publishes no SIP egress range (its SIP
+   runs on Voximplant): ask Ultravox support for the source addresses,
+   or DIDWW support (support@didww.com); never invent a range or
+   suggest `0.0.0.0/0`.
+   Termination: 24 Hour Limit (USD) at its minimum, 50 (default 3000),
+   Capacity limit = expected concurrency, usage limit notification on;
+   CLI limited to the DID; Destination dialing Reject All except the
+   countries the agent calls. Enable the trunk if it shows Disabled.
+   Host: the region-nearest of `nyc.us.out.didww.com`,
+   `lac.us.out.didww.com`, `mia.us.out.didww.com`,
+   `fra.eu.out.didww.com`, `ams.eu.out.didww.com`, `sg.out.didww.com`,
+   `hk.out.didww.com`. The user hands the generated credentials over in
+   a file or environment variables, not pasted into chat. These credentials go into `medium.sip.outgoing`.
 5. **Verify:** inbound from a mobile; outbound via a test
    `POST /api/calls`; transfers (Ultravox has the richest transfer set:
    cold REFER, warm, bridged). SIP minutes bill separately from model
@@ -64,6 +83,10 @@ Ultravox's model.
   agent address (switch to the fallback shape).
 - Outbound auth failures: credentials in `medium.sip.outgoing` do not
   match the DIDWW outbound trunk.
+- Outbound 403 or rejected from DIDWW: source not in the outbound
+  trunk's Allowed SIP IPs, caller ID not allowed in its CLI settings,
+  destination not allowed, or the 24 Hour Limit was reached (DIDWW then
+  disables the trunk; re-enable it in the panel).
 
 ## Panel map and money
 
@@ -78,4 +101,5 @@ Methods.
 ---
 
 Built around [DIDWW](https://www.didww.com/?ref=didww-to-ultravox) SIP
-trunking and Ultravox's SIP docs; verified August 2026.
+trunking and Ultravox's SIP docs; verified August 2026, DIDWW outbound
+trunk rules October 2026.

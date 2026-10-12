@@ -12,7 +12,8 @@ This skill automates the steps described in the [ElevenLabs integration guide](h
 
 | Side | Path the skill uses | Authentication |
 |---|---|---|
-| DIDWW: trunks, number, spend limits | DIDWW MCP `https://api.didww.com/mcp` | OAuth sign-in, no keys |
+| DIDWW: number, inbound trunk | DIDWW MCP `https://api.didww.com/mcp` | OAuth sign-in, no keys |
+| DIDWW: outbound trunk, spend limits | You, in the DIDWW User Panel. The MCP has no outbound trunk tools | Your panel login |
 | ElevenLabs: agent creation and configuration, number-to-agent assignment | ElevenLabs hosted MCP `https://api.elevenlabs.io/v1/mcp` | OAuth sign-in, no keys |
 | ElevenLabs: number import (not available in their MCP) | REST `POST /v1/convai/phone-numbers` via `scripts/import_number.py` | One `xi-api-key`, or a guided dashboard step |
 
@@ -61,11 +62,11 @@ The skill confirms three things in one message: which DIDWW number (or which cou
 
 ### DIDWW side
 
-All DIDWW changes go through the DIDWW MCP under your own account permissions. Claude Code asks for confirmation before each tool call unless you have allowed that tool.
+The number and the inbound trunk are configured through the DIDWW MCP under your own account permissions. Claude Code asks for confirmation before each tool call unless you have allowed that tool. The outbound trunk is created by you in the DIDWW User Panel, because the MCP has no outbound trunk tools.
 
 - **Inbound SIP trunk.** Host `sip.rtc.elevenlabs.io`, port 5060, transport TCP (TLS is supported; media encryption must then match on both sides). Digest authentication with a generated username and password. Digest is preferred over IP filtering because ElevenLabs sends from distributed addresses and static IPs are an enterprise feature. The DID is assigned to this trunk.
-- **Outbound SIP trunk.** Created for this connection. DIDWW generates the username and password; the host is the one nearest to the platform's region: `fra.eu.out.didww.com`, `ams.eu.out.didww.com`, `nyc.us.out.didww.com` or `sg.out.didww.com`. The agent passes these credentials to the platform side.
-- **Spend controls.** A 24-hour spend limit of 10 to 50 USD and channel limits matching the expected concurrency are set before the first call. The defaults are too high for a test agent.
+- **Outbound SIP trunk.** Needed only for calls the agent places. You create it in the DIDWW User Panel under **Voice**, **Outbound Trunks**, **Create New**, because the DIDWW MCP has no outbound trunk tools. If that page shows **Get Access**, the account is not approved for outbound calling yet: the application needs a business account with a company name and VAT/TAX ID, and DIDWW replies within 48 business hours. The inbound side can go live meanwhile. Choose the **Credentials & IP-Based** authentication method. It needs at least one **Allowed SIP IP address**: ElevenLabs publishes no SIP source range for its standard endpoint. With ElevenLabs Enterprise static SIP (`sip-static.rtc.elevenlabs.io`), list the /24 block ElevenLabs gives you; otherwise contact DIDWW support (support@didww.com) before enabling outbound calls. Do not enter `0.0.0.0/0`; DIDWW advises against open ranges. Set **Media encryption mode** to match the platform side. DIDWW generates the username and password; give them to the agent in a file or environment variables rather than pasting them into the chat, and it passes them to the platform side. Enable the trunk if it shows **Disabled**. The host is the one nearest to the platform's region: `nyc.us.out.didww.com`, `lac.us.out.didww.com`, `mia.us.out.didww.com`, `fra.eu.out.didww.com`, `ams.eu.out.didww.com`, `sg.out.didww.com` or `hk.out.didww.com`.
+- **Spend controls.** On the outbound trunk, under **Termination**: **24 Hour Limit (USD)** at its minimum of 50 (the default is 3000, and DIDWW disables the trunk when the limit is reached), **Capacity limit** matching the expected concurrency, and the usage limit notification on. Under **CLI Settings**, allow only the connected number as caller ID; under **Destination Dialing Settings**, reject all destinations except the countries the agent calls. On the inbound trunk the skill sets a capacity limit through the MCP.
 
 ### ElevenLabs side
 
@@ -103,7 +104,8 @@ The skill carries this failure map and works through it when a test call fails.
 | Inbound call rejected or silent | Digest mismatch between the DIDWW trunk and the import's inbound credentials, or the number's `+` differs from how it was imported | Re-enter the same username and password on both sides; import the number in E.164 as DIDWW shows it |
 | SIP 488, or one-way audio | Media encryption enabled on one side only | Match SRTP on the DIDWW trunk and the ElevenLabs import |
 | Outbound calls fail | A `sip:` prefix or a port pasted into the Address field, or the wrong region host | Use the bare DIDWW host, for example `fra.eu.out.didww.com` |
-| Everything works but spend is higher than expected | Default spend limits were kept | Set the 24-hour spend limit and channel limits on the DIDWW trunks |
+| Everything works but spend is higher than expected | The outbound trunk kept its default 24-hour limit of 3000 USD | Lower **24 Hour Limit (USD)** to 50 in the DIDWW User Panel and set the capacity limits |
+| Outbound call rejected by DIDWW | Source IP not in the outbound trunk's Allowed SIP IP addresses, caller ID not allowed in its CLI settings, destination not allowed, or the 24-hour limit reached, which disables the trunk | Check the outbound trunk in the DIDWW User Panel and re-enable it |
 
 ## Keys, billing and safety
 
