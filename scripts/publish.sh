@@ -4,5 +4,6 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 npm whoami >/dev/null 2>&1 || { echo "Not logged in to npm. Run:  npm login"; exit 1; }
-names=("$@"); [[ ${#names[@]} -eq 0 ]] && names=($(ls skills))
+names=("$@")
+if [[ ${#names[@]} -eq 0 ]]; then for d in skills/*/; do [[ -f "${d}package.json" ]] && names+=("$(basename "$d")"); done; fi
 for n in "${names[@]}"; do echo "== $n"; bash "skills/$n/publish.sh"; echo; done
