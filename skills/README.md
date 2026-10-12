@@ -3,8 +3,9 @@
 The nine skills, one folder each. The table of skills, install instructions and requirements are in the [root README](../README.md); this page covers the folder itself.
 
 Claude Code skills that put an AI voice agent on a DIDWW phone number. One hub skill picks
-the platform and does the universal DIDWW wiring (number, inbound and outbound SIP trunks,
-digest auth, spend limits, verification calls); eight pairing skills cover one voice platform
+the platform and does the universal DIDWW wiring (number and inbound SIP trunk through the
+DIDWW MCP, digest auth, the outbound trunk and its 24-hour spend limit guided in the DIDWW
+User Panel, verification calls); eight pairing skills cover one voice platform
 each, as automatically as that platform's API and MCP allow.
 
 ## Install

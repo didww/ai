@@ -29,6 +29,7 @@ DIDWW publishes a family of **agent skills** for **Claude Code** that put an AI 
   ```
 
   Then run `/mcp` inside Claude Code and sign in to the DIDWW User Panel. See [Getting started with DIDWW MCP](https://doc.didww.com/mcp/getting-started.html).
+- For outbound calls, access to DIDWW outbound trunks on the account. If **Voice**, **Outbound Trunks** in the DIDWW User Panel shows **Get Access**, apply there first ([Get access to outbound trunks](https://doc.didww.com/voice/outbound-trunks/get-access.html)): it needs a business account with a company name and VAT/TAX ID, and DIDWW replies within 48 business hours. Inbound calls work without it.
 
 - An account on the voice platform you intend to use. Each skill page lists what it needs.
 

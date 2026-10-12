@@ -21,7 +21,7 @@ Use the **didww-to-openai-realtime** skill with **Claude Code** to point a DIDWW
 
 - An active [DIDWW account](https://my.didww.com/) with at least one DID number, or a balance to buy one. Numbers in registration-required countries add a verification wait.
 - [Claude Code](https://docs.claude.com/en/docs/claude-code) installed and signed in.
-- The DIDWW MCP connected in Claude Code, so the agent can manage trunks and numbers under your account:
+- The DIDWW MCP connected in Claude Code, so the agent can manage numbers and inbound trunks under your account:
 
   ```bash
   claude mcp add --scope user --transport http didww https://api.didww.com/mcp

@@ -23,13 +23,14 @@ LiveKit has no MCP; the script covers the whole SIP API in one run.
 
 - An active [DIDWW account](https://my.didww.com/) with at least one DID number, or a balance to buy one. Numbers in registration-required countries add a verification wait.
 - [Claude Code](https://docs.claude.com/en/docs/claude-code) installed and signed in.
-- The DIDWW MCP connected in Claude Code, so the agent can manage trunks and numbers under your account:
+- The DIDWW MCP connected in Claude Code, so the agent can manage numbers and inbound trunks under your account:
 
   ```bash
   claude mcp add --scope user --transport http didww https://api.didww.com/mcp
   ```
 
   Then run `/mcp` inside Claude Code and sign in to the DIDWW User Panel when the browser opens. See [Getting started with DIDWW MCP](https://doc.didww.com/mcp/getting-started.html).
+- For outbound calls, access to DIDWW outbound trunks on the account. If **Voice**, **Outbound Trunks** in the DIDWW User Panel shows **Get Access**, apply there first ([Get access to outbound trunks](https://doc.didww.com/voice/outbound-trunks/get-access.html)): it needs a business account with a company name and VAT/TAX ID, and DIDWW replies within 48 business hours. Inbound calls work without it.
 - A LiveKit Cloud project, or a self-hosted LiveKit server with the SIP service.
 - An API key and secret from the Cloud project's **Settings**, **API keys**. The secret is shown once. Note the **Project URL** (`wss://<project>.livekit.cloud`) and the **SIP URI** (`sip:<sip-subdomain>.sip.livekit.cloud`) on the same settings page. Their subdomains differ, so copy each value; do not derive one from the other.
 - The `agent_name` your worker registers in its worker options (explicit dispatch).

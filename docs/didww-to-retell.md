@@ -21,13 +21,14 @@ This skill automates the steps described in the [Retell AI integration guide](ht
 
 - An active [DIDWW account](https://my.didww.com/) with at least one DID number, or a balance to buy one. Numbers in registration-required countries add a verification wait.
 - [Claude Code](https://docs.claude.com/en/docs/claude-code) installed and signed in.
-- The DIDWW MCP connected in Claude Code, so the agent can manage trunks and numbers under your account:
+- The DIDWW MCP connected in Claude Code, so the agent can manage numbers and inbound trunks under your account:
 
   ```bash
   claude mcp add --scope user --transport http didww https://api.didww.com/mcp
   ```
 
   Then run `/mcp` inside Claude Code and sign in to the DIDWW User Panel when the browser opens. See [Getting started with DIDWW MCP](https://doc.didww.com/mcp/getting-started.html).
+- For outbound calls, access to DIDWW outbound trunks on the account. If **Voice**, **Outbound Trunks** in the DIDWW User Panel shows **Get Access**, apply there first ([Get access to outbound trunks](https://doc.didww.com/voice/outbound-trunks/get-access.html)): it needs a business account with a company name and VAT/TAX ID, and DIDWW replies within 48 business hours. Inbound calls work without it.
 - A Retell account and an API key from the dashboard's API Keys tab. The same key powers the Retell MCP.
 - Optionally, the Retell MCP connected in Claude Code (`claude mcp add --scope user --transport http retell https://mcp.retellai.com` with your Bearer key).
 

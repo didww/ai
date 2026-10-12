@@ -38,7 +38,8 @@ Straight from this repository, without the npm registry: `npx skills add didww/a
 
 ### Requirements
 
-- [Claude Code](https://docs.claude.com/en/docs/claude-code) with the [DIDWW MCP](https://doc.didww.com/mcp/index.html) connected (`claude mcp add --scope user --transport http didww https://api.didww.com/mcp`, then `/mcp` to sign in). The skills do all carrier-side work through it, under your own account permissions.
+- [Claude Code](https://docs.claude.com/en/docs/claude-code) with the [DIDWW MCP](https://doc.didww.com/mcp/index.html) connected (`claude mcp add --scope user --transport http didww https://api.didww.com/mcp`, then `/mcp` to sign in). The skills configure the number and the inbound trunk through it, under your own account permissions. The MCP has no outbound trunk tools, so for agents that place calls the skills walk you through creating the outbound trunk and its 24-hour spend limit in the DIDWW User Panel.
+- For outbound calls, access to [DIDWW outbound trunks](https://doc.didww.com/voice/outbound-trunks/get-access.html) on the account (an application DIDWW approves within 48 business hours).
 - Node.js 16.7 or later for the installer; Python 3 for the skill scripts, which use the standard library only.
 - An account on the voice platform you pair with. Each skill's README lists what it needs.
 
