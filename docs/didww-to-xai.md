@@ -70,7 +70,7 @@ XAI_API_KEY=... python3 ~/.claude/skills/didww-to-xai/scripts/register_number.py
 ```
 
 > [!WARNING]
-> The response carries the webhook signing secret exactly once, and the SIP password is never returned again. Store both immediately: the password goes into the DIDWW trunk, the secret into the backend's environment.
+> The response carries the webhook signing secret exactly once, and the SIP password is never returned again. The script saves the full response to `xai-<number>.json` with owner-only permissions (it never overwrites an existing file; `--out` chooses another path) and prints a copy with the secrets masked. Move the secret into the backend's environment and delete the file; the password goes into the DIDWW trunk. The password can be given in `XAI_SIP_PASS` instead of `--sip-pass`, which keeps it out of shell history.
 
 ### DIDWW side
 

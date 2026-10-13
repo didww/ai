@@ -39,11 +39,56 @@ if (has('--help') || has('-h')) {
   process.exit(0);
 }
 
+const fail = (msg) => {
+  console.error(`  ${msg}`);
+  console.error('  Nothing was changed.\n');
+  process.exit(1);
+};
+
+const known = new Set(['--dry-run', '-n', '--dest']);
 const destFlag = argv.indexOf('--dest');
-const dest = destFlag !== -1 && argv[destFlag + 1]
+if (destFlag !== -1 && (!argv[destFlag + 1] || argv[destFlag + 1].startsWith('-'))) {
+  fail('--dest needs a directory.');
+}
+const unknown = argv.filter((a, i) => !known.has(a) && i !== destFlag + 1);
+if (unknown.length) fail(`Unknown option ${unknown[0]}; see --help.`);
+
+const home = os.homedir();
+const dest = destFlag !== -1
   ? path.resolve(argv[destFlag + 1])
-  : path.join(os.homedir(), '.claude', 'skills', SKILL);
-const backupRoot = path.join(os.homedir(), '.claude', 'skill-backups');
+  : path.join(home, '.claude', 'skills', SKILL);
+const backupRoot = path.join(home, '.claude', 'skill-backups');
+
+// An existing dest is moved to the backups, so it must be a directory this
+// installer owns: never home, a skills root, the package itself, or a
+// folder holding anything other than this skill.
+const inside = (child, parent) => {
+  const rel = path.relative(parent, child);
+  return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
+};
+const protectedDirs = [path.parse(dest).root, home, path.join(home, '.claude'),
+  path.join(home, '.claude', 'skills'), backupRoot];
+if (protectedDirs.includes(dest)) fail(`Refusing to install into ${dest}: pick a folder for this skill.`);
+if (inside(dest, src) || inside(src, dest)) fail(`Refusing to install into ${dest}: it overlaps the package.`);
+
+const skillName = (dir) => {
+  try {
+    const head = fs.readFileSync(path.join(dir, 'SKILL.md'), 'utf8').split(/^---$/m)[1] || '';
+    const m = head.match(/^name:\s*(\S+)\s*$/m);
+    return m ? m[1] : null;
+  } catch (e) {
+    return null;
+  }
+};
+let existing = false;
+if (fs.existsSync(dest)) {
+  if (!fs.statSync(dest).isDirectory()) fail(`Refusing to install: ${dest} is a file.`);
+  const entries = fs.readdirSync(dest).filter((f) => f !== '.DS_Store');
+  if (entries.length && skillName(dest) !== SKILL) {
+    fail(`Refusing to install: ${dest} exists and is not a ${SKILL} install.`);
+  }
+  existing = entries.length > 0;
+}
 
 const say = (s) => console.log(s);
 const tick = (s) => say(`  ✓ ${s}`);
@@ -63,7 +108,7 @@ if (missing.length) {
 
 // Back up any existing install. Backups go OUTSIDE skills/ deliberately:
 // anything with a SKILL.md under skills/ is discovered as a skill.
-if (fs.existsSync(dest)) {
+if (existing) {
   const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\..+/, '').replace('T', '-');
   const backup = path.join(backupRoot, `${SKILL}-${stamp}`);
   if (dryRun) {

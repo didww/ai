@@ -38,7 +38,10 @@ Secure by default: --transport tls and --srtp require, so signaling uses TLS
   outbound trunk allow and require both offer encrypted media only.
 Both trunks are limited to PCMA and PCMU, the only codecs DIDWW and LiveKit
   SIP share.
-LIVEKIT_URL accepts the wss:// project URL or the https:// API host.
+LIVEKIT_URL accepts the wss:// project URL or the https:// API host (plain
+  ws:// or http:// only for localhost).
+LIVEKIT_INBOUND_PASS and DIDWW_TRUNK_PASS in the environment may replace
+  --inbound-pass and --outbound-pass, keeping them out of shell history.
 """
 import base64, hashlib, hmac, json, os, sys, time, urllib.error, urllib.request
 
@@ -58,12 +61,17 @@ SECRET = os.environ.get("LIVEKIT_API_SECRET", "")
 if not (URL and KEY and SECRET):
     sys.exit("Set LIVEKIT_URL, LIVEKIT_API_KEY and LIVEKIT_API_SECRET "
              "(LiveKit Cloud: project Settings, API keys; the secret is shown once).")
-for p in ("wss://", "ws://"):
-    if URL.startswith(p):
-        URL = "https://" + URL[len(p):]
-if not URL.startswith("http"):
+if URL.startswith("wss://"):
+    URL = "https://" + URL[len("wss://"):]
+elif URL.startswith("ws://"):
+    URL = "http://" + URL[len("ws://"):]
+elif not URL.startswith(("https://", "http://")):
     URL = "https://" + URL
 HOST = URL.split("://", 1)[1].split("/", 1)[0]
+_hostname = HOST.rsplit(":", 1)[0].strip("[]") if HOST.count(":") <= 1 or HOST.startswith("[") else HOST
+if URL.startswith("http://") and _hostname not in ("localhost", "127.0.0.1", "::1"):
+    sys.exit("LIVEKIT_URL must be https:// or wss:// (the signed API token travels "
+             "with every request); plain http/ws is accepted only for localhost.")
 # The SIP URI subdomain is NOT the project URL subdomain (e.g. project
 # my-project-ab12cd34, SIP URI sip:vjnxecm0tjk.sip.livekit.cloud), so it is
 # never derived: it is copied from Project settings.
@@ -143,13 +151,15 @@ if transport not in TRANSPORTS:
     sys.exit(f"--transport must be one of {', '.join(TRANSPORTS)}.")
 if srtp not in SRTP:
     sys.exit(f"--srtp must be one of {', '.join(SRTP)}.")
-user, pw, ips = opt("--inbound-user"), opt("--inbound-pass"), multi("--allow-ip")
+user, ips = opt("--inbound-user"), multi("--allow-ip")
+pw = opt("--inbound-pass") or os.environ.get("LIVEKIT_INBOUND_PASS", "")
+out_pw = opt("--outbound-pass") or os.environ.get("DIDWW_TRUNK_PASS", "")
 if (user and not pw) or (pw and not user):
     sys.exit("--inbound-user and --inbound-pass go together.")
 if not ONLY_OUT and not user and not ips:
     sys.exit("Give --inbound-user/--inbound-pass (digest, works everywhere) and/or "
              "--allow-ip; a trunk with neither answers INVITEs from anyone who knows the number.")
-if opt("--outbound-host") and not (opt("--outbound-user") and opt("--outbound-pass")):
+if opt("--outbound-host") and not (opt("--outbound-user") and out_pw):
     sys.exit("--outbound-host needs --outbound-user and --outbound-pass "
              "(the credentials of the DIDWW outbound trunk).")
 if ips and not user and not ONLY_OUT:
@@ -184,7 +194,7 @@ if not ONLY_OUT:
 if opt("--outbound-host"):
     out = {"name": f"DIDWW {number} out", "address": opt("--outbound-host"),
            "transport": TRANSPORTS[transport], "numbers": [number],
-           "auth_username": opt("--outbound-user"), "auth_password": opt("--outbound-pass"),
+           "auth_username": opt("--outbound-user"), "auth_password": out_pw,
            "media": media()}
     oid = g(call("CreateSIPOutboundTrunk", {"trunk": out}), "sipTrunkId", "sip_trunk_id")
     print(f"outbound trunk: {oid}  -> {out['address']} ({transport}); the worker dials "

@@ -78,12 +78,14 @@ The number and the inbound trunk are configured through the DIDWW MCP under your
 To run the import by hand:
 
 ```bash
-ELEVENLABS_API_KEY=... python3 ~/.claude/skills/didww-to-elevenlabs/scripts/import_number.py \
-  --number +33144556677 --label "Paris line" \
-  --inbound-user USER --inbound-pass PASS \
-  --outbound-host fra.eu.out.didww.com --outbound-user OUSER --outbound-pass OPASS \
+ELEVENLABS_INBOUND_PASS=... DIDWW_TRUNK_PASS=... ELEVENLABS_API_KEY=... \
+python3 ~/.claude/skills/didww-to-elevenlabs/scripts/import_number.py \
+  --number +33144556677 --label "Paris line" --inbound-user USER \
+  --outbound-host fra.eu.out.didww.com --outbound-user OUSER \
   --transport tcp --agent AGENT_ID
 ```
+
+The passwords can also be passed as `--inbound-pass` and `--outbound-pass`; the environment keeps them out of shell history. If the DIDWW outbound trunk does not exist yet, leave out the three outbound values: the number is imported for inbound calls only, and the outbound trunk can be added later.
 
 > [!IMPORTANT]
 > The number must be imported exactly as it appears on the DIDWW trunk. A missing or extra `+` is enough for ElevenLabs to reject the call.

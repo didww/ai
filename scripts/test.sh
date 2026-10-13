@@ -3,3 +3,4 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 for d in skills/*/; do echo "== ${d%/}"; bash "${d}test.sh"; echo; done
+echo "== installers"; python3 -B scripts/test_installers.py

@@ -30,7 +30,8 @@ def run_script(argv, env, canned, fail=None):
         urllib.request.urlopen = old_open; sys.argv = old_argv; os.environ.clear(); os.environ.update(old_env)
     return reqs, out.getvalue(), code
 
-SIP = {"domain": "acct.sip.ultravox.ai", "allowedCidrRanges": ["1.2.3.0/24"], "fallbackHandler": {"url": "https://h/route"}}
+SIP = {"domain": "acct.sip.ultravox.ai", "allowedCidrRanges": ["1.2.3.0/24"], "fallbackHandler": {"url": "https://h/route", "secrets": ["SECRET123"]}}
+AID = "3f2b6c1e-8a4d-4e2f-9b7a-1c2d3e4f5a6b"
 reqs, out, code = run_script(["--help"], {"ULTRAVOX_API_KEY": "k"}, SIP)
 check("--help exits 0 without calling the API", code == 0 and not reqs and "Usage" in out)
 reqs, out, code = run_script(["--show"], {"ULTRAVOX_API_KEY": "k"}, SIP)
@@ -39,6 +40,34 @@ reqs, out, code = run_script(["--allow-cidr", "1.2.3.0/24", "--allow-cidr", "5.6
 p = reqs[1]["body"] if len(reqs) > 1 else {}
 check("flags become one PATCH /api/sip with allowedCidrRanges, fallbackHandler{url}, allowAllAgents", len(reqs) == 2 and reqs[1]["method"] == "PATCH" and p.get("allowedCidrRanges") == ["1.2.3.0/24", "5.6.7.8/32"] and p.get("fallbackHandler") == {"url": "https://h/route"} and p.get("allowAllAgents") is True, json.dumps(p))
 check("prints the agent_<id>@domain address shape", "agent_{agent_id}@acct.sip.ultravox.ai" in out)
+reqs, out, code = run_script(["--show"], {"ULTRAVOX_API_KEY": "k"}, SIP)
+check("--show redacts the fallback handler's signing secret", "SECRET123" not in out and "***" in out)
+reqs, out, code = run_script(["--fallback-url", "https://h/route"], {"ULTRAVOX_API_KEY": "k"}, SIP)
+check("update output redacts the generated secret too", "SECRET123" not in out and "--show-secrets" in out, out[-200:])
+reqs, out, code = run_script(["--show", "--show-secrets"], {"ULTRAVOX_API_KEY": "k"}, SIP)
+check("--show --show-secrets reveals it on request", "SECRET123" in out)
+reqs, out, code = run_script(["--allow-agent", AID, "--allow-agent", AID.upper() + "=^\\+?33144556677$"], {"ULTRAVOX_API_KEY": "k"}, SIP)
+p = reqs[1]["body"] if len(reqs) > 1 else {}
+check("--allow-agent builds AgentAllowance objects {agentId, toUserPattern?}", p.get("allowedAgents") == [{"agentId": AID}, {"agentId": AID.upper(), "toUserPattern": "^\\+?33144556677$"}], json.dumps(p))
+reqs, out, code = run_script(["--allow-agent", "agent_.*"], {"ULTRAVOX_API_KEY": "k"}, SIP)
+check("--allow-agent with a non-UUID is refused before any API call", code != 0 and not reqs and "UUID" in out)
+reqs, out, code = run_script(["--allow-didww"], {"ULTRAVOX_API_KEY": "k"}, SIP)
+p = reqs[1]["body"] if len(reqs) > 1 else {}
+check("--allow-didww sets DIDWW's signaling/media ranges", p.get("allowedCidrRanges") == ["46.19.208.0/21", "185.238.172.0/22"], json.dumps(p))
+reqs, out, code = run_script(["--allow-cidr", "2a01:ad00::/32"], {"ULTRAVOX_API_KEY": "k"}, SIP)
+check("IPv6 or malformed CIDR refused before any API call", code != 0 and not reqs)
+reqs, out, code = run_script(["--allow-cidr"], {"ULTRAVOX_API_KEY": "k"}, SIP)
+check("flag missing its value: clean error, no traceback, no API call", code != 0 and not reqs and "needs a value" in out and "Traceback" not in out)
+reqs, out, code = run_script(["--allow-cdir", "1.2.3.0/24"], {"ULTRAVOX_API_KEY": "k"}, SIP)
+check("misspelt flag is refused instead of silently ignored", code != 0 and not reqs and "Unknown argument" in out)
+reqs, out, code = run_script(["--fallback-url", "http://h/route"], {"ULTRAVOX_API_KEY": "k"}, SIP)
+check("plain http fallback URL refused", code != 0 and not reqs)
+reqs, out, code = run_script(["--allow-all-agents"], {"ULTRAVOX_API_KEY": "k"}, dict(SIP, allowedCidrRanges=[]))
+check("warns when allowedCidrRanges stays empty (DIDWW's calls not accepted)", "WARNING: allowedCidrRanges is empty" in out and "not accepted" in out)
+reqs, out, code = run_script(["--allow-cidr", "0.0.0.0/0"], {"ULTRAVOX_API_KEY": "k"}, SIP)
+check("--allow-cidr 0.0.0.0/0 refused", code != 0 and not reqs)
+reqs, out, code = run_script(["--allow-all-agents"], {"ULTRAVOX_API_KEY": "k"}, dict(SIP, allowedCidrRanges=["0.0.0.0/0"]))
+check("warns when the account already allows 0.0.0.0/0", "0.0.0.0/0" in out and "WARNING" in out)
 reqs, out, code = run_script([], {"ULTRAVOX_API_KEY": "k"}, SIP)
 check("no flags: reads, then refuses to PATCH nothing", code != 0 and len(reqs) == 1 and "Nothing to change" in out)
 reqs, out, code = run_script(["--show"], {}, SIP)

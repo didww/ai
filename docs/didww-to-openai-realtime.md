@@ -73,11 +73,11 @@ All DIDWW changes go through the DIDWW MCP under your own account permissions. C
 - **Spend controls.** The skill sets a capacity limit on the inbound trunk matching the expected concurrency. No DIDWW outbound trunk is used, so there is no 24-hour limit to set.
 
 > [!NOTE]
-> OpenAI's SIP endpoint has no digest authentication. The webhook's accept or reject decision is the authentication gate, which is why the generated backend rejects calls to unknown numbers by default. Anyone can send an INVITE to the URI; keep that rejection in place.
+> OpenAI's SIP endpoint has no digest authentication. Anyone who knows your project ID can send an INVITE to the URI with any destination number, so the backend's number match is routing, not authentication. Keep the project ID private, keep the signed webhook check, and keep the rejection of unknown numbers in place.
 
 ### Backend
 
-`scripts/webhook_server.py` is a stdlib-only starting point. It verifies the webhook signature, accepts calls to the numbers listed in its `AGENTS` table with the model and your instructions, rejects other numbers, and exposes transfer through `POST /v1/realtime/calls/{call_id}/refer` with a `tel:` target. Edit `AGENTS` (number to instructions and transfer target), deploy it behind your HTTPS front, and set its environment:
+`scripts/webhook_server.py` is a stdlib-only starting point. It verifies the webhook signature, ignores duplicate deliveries, accepts calls whose destination exactly matches a number in its `AGENTS` table with the model and your instructions, and rejects other numbers. For a number with a transfer target it gives the model a `transfer_call` tool, watches the call over its websocket, and when the model calls the tool it transfers the call through `POST /v1/realtime/calls/{call_id}/refer`. Edit `AGENTS` (number to instructions and transfer target), deploy it behind your HTTPS front, and set its environment. The server refuses to start without both variables:
 
 ```bash
 OPENAI_API_KEY=... OPENAI_WEBHOOK_SECRET=... PORT=8080 python3 webhook_server.py

@@ -90,7 +90,7 @@ The number and the inbound trunk are configured through the DIDWW MCP under your
 | Platform | DIDWW inbound trunk destination | Notes |
 |---|---|---|
 | ElevenLabs | `sip.rtc.elevenlabs.io`, port 5060 | TCP or TLS, digest auth |
-| Vapi | `{credential_id}.sip.vapi.ai` (EU: `.sip.eu.vapi.ai`) | Create the Vapi credential first; allow Vapi's signaling IPs |
+| Vapi | `sip.vapi.ai` (EU: `sip.eu.vapi.ai`) | Vapi's inbound credential lists DIDWW's seven signaling IPs; Max transfers 1 for transfers |
 | Retell | `sip.retellai.com` | TCP |
 | Ultravox | The account's own SIP domain from `GET /api/sip` | Address-based routing to `agent_<id>@<domain>` |
 | Vogent | `sip.vogent.ai` | Digest auth |

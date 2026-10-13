@@ -66,8 +66,12 @@ and have the user authenticate once in `/mcp`.
    `credentials` object that must match step 2's digest pair exactly;
    outbound address is the DIDWW host from step 2, hostname only, no
    `sip:` prefix, transport lowercase (`tcp` or `tls`), credentials from
-   the outbound trunk. Then assign the agent to the number (MCP:
-   `agents_update_phone_number`, or the script's `--agent` flag).
+   the outbound trunk. Without an outbound trunk yet, leave out all
+   three `--outbound-*` values: the number imports for inbound calls
+   only. Passwords can come from `ELEVENLABS_INBOUND_PASS` and
+   `DIDWW_TRUNK_PASS` instead of the command line. Then assign the agent
+   to the number (MCP: `agents_update_phone_number`, or the script's
+   `--agent` flag, which sets `agent_id` on the import).
 5. **Verify:** inbound call from a mobile, outbound call showing the DID
    as caller ID, transfer if configured. CDRs visible on the DIDWW side.
 

@@ -1,6 +1,6 @@
 {
   "name": "didww-connect",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Connect a DIDWW phone number to ANY AI voice platform: helps choose the platform, then wires the SIP trunk pair and number.",
   "bin": {
     "didww-connect": "bin/install.js"

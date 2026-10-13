@@ -35,15 +35,21 @@ endpoint.
    `sip-eu.api.openai.com`). Attach the DID. Set `capacity_limit` = expected concurrent calls (it caps
    how many calls run at once, and so the cost). No DIDWW outbound trunk
    is involved, so there is no 24-hour limit to set. Note: no digest auth
-   exists on OpenAI's ingress; the webhook's accept/reject decision IS
-   the auth gate, so the generated server rejects calls to unknown DIDs
-   by default.
+   exists on OpenAI's ingress, and anyone who knows the project ID can
+   send an INVITE with any To number. The server's DID match is a
+   routing filter, not authentication: keep the project ID private
+   (treat the SIP URI like a credential) and rely on the signed webhook
+   plus the reject-by-default for unknown numbers.
 4. **Deploy the backend:** `scripts/webhook_server.py` is a stdlib-only
-   starting point: verifies the webhook signature, accepts calls with
-   the model and instructions, exposes the transfer via the refer
-   endpoint (`POST /v1/realtime/calls/{call_id}/refer` with
-   `tel:` target). Adapt, deploy, set `OPENAI_API_KEY` and
-   `OPENAI_WEBHOOK_SECRET` in its environment.
+   starting point: verifies the webhook signature (it refuses to start
+   without `OPENAI_WEBHOOK_SECRET` and `OPENAI_API_KEY`), drops duplicate
+   deliveries, matches the To number exactly against `AGENTS`, accepts
+   with the model and instructions, and for a DID with `transfer_to`
+   gives the model a `transfer_call` tool, watches the call websocket
+   (`wss://api.openai.com/v1/realtime?call_id=...`) and on the tool call
+   refers the call (`POST /v1/realtime/calls/{call_id}/refer` with
+   `{"target_uri": "tel:+..."}`). Adapt, deploy behind HTTPS, set both
+   variables in its environment.
 5. **Verify:** inbound call from a mobile; watch the server log accept
    the call; test the transfer phrase. Outbound calls are not part of
    OpenAI's SIP interface as of August 2026; originate outbound from the

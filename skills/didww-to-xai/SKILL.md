@@ -30,9 +30,12 @@ offer the hosted platforms if the user cannot run a small backend.
    digest credentials as `auth_username`/`auth_password` (preferred;
    invent a pair) and/or `allowed_addresses` with DIDWW's signaling
    IPs. The response carries the webhook signing secret exactly once
-   and the SIP password is never returned again: store both
-   immediately, the password in the DIDWW trunk, the secret in the
-   backend's environment.
+   and the SIP password is never returned again: the script writes the
+   full response to `xai-<number>.json` (mode 0600, never overwritten;
+   `--out` picks another path), shows a redacted copy, and reads the
+   password from `XAI_SIP_PASS` if set. Move the secret into the
+   backend's environment and delete the file; the password goes into
+   the DIDWW trunk.
 3. **DIDWW side (MCP, OAuth):** inbound trunk with destination
    `sip:{number}@sip.voice.x.ai;transport=tls`, digest auth from step 2.
    Attach the DID. Set `capacity_limit` = expected concurrent calls (it caps

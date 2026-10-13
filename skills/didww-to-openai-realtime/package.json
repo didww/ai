@@ -1,6 +1,6 @@
 {
   "name": "didww-to-openai-realtime",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Point a DIDWW phone number directly at OpenAI's Realtime API over SIP, with a generated webhook backend for call control.",
   "bin": {
     "didww-to-openai-realtime": "bin/install.js"

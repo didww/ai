@@ -41,9 +41,19 @@ Ultravox's model.
 2. **Read the account SIP domain:** `GET /api/sip` (the `domain` field is
    read-only and per-account; never guess it). `scripts/connect.py
    --show` prints it.
-3. **Ultravox side (`scripts/connect.py`):** set `allowedCidrRanges` to
-   DIDWW's signaling ranges (or leave open and rely on the reject logic),
-   set `allowedAgents` or the `fallbackHandler` URL, and for outbound
+3. **Ultravox side (`scripts/connect.py`):** always restrict
+   `allowedCidrRanges` to DIDWW (`--allow-didww` sets `46.19.208.0/21`
+   and `185.238.172.0/22`, which cover every DIDWW signaling location
+   per doc.didww.com). The allowlist IS Ultravox's inbound
+   authentication: until DIDWW's ranges are on it, DIDWW's INVITEs are
+   not accepted, and never use `0.0.0.0/0` (any address; Ultravox
+   itself advises against it).
+   Then either `allowedAgents` (`--allow-agent AGENT_UUID[=TO_USER_REGEX]`,
+   objects `{agentId, toUserPattern}`, max 20; the pattern defaults to
+   `^agent_<agent_id>$`, so a DID-as-user-part trunk needs a pattern
+   such as `^\+?33144556677$`) or the `fallbackHandler` URL (https;
+   Ultravox generates its signing secret, which the handler must verify;
+   `--show --show-secrets` reveals it, normal output redacts it). For outbound
    note that calls are placed per call via `POST /api/calls` with
    `medium.sip.outgoing` carrying the DIDWW host and outbound trunk
    credentials.

@@ -2,8 +2,8 @@
 
 Use the **didww-to-vapi** skill with **Claude Code** to connect a DIDWW phone number to a **Vapi** assistant over Vapi's bring-your-own SIP trunking. Vapi is API-first for this connection, and the skill wraps the write calls in a script because Vapi's MCP can list trunks and numbers but cannot create them.
 
-- Create the Vapi SIP trunk credential and the imported number, bound to an assistant, in one run.
-- Build the DIDWW inbound trunk against the per-credential ingress host that Vapi assigns.
+- Create the Vapi inbound and outbound SIP trunk credentials and the imported number, bound to an assistant, in one run.
+- Build the DIDWW inbound trunk pointed at Vapi's regional SIP host, with SIP REFER transfers allowed and authenticated.
 - Verify calls through Vapi's MCP without leaving the conversation.
 
 This skill automates the steps described in the [Vapi integration guide](https://doc.didww.com/integrations/vapi/index.html).
@@ -18,7 +18,7 @@ This skill automates the steps described in the [Vapi integration guide](https:/
 | Vapi: verification (`list_phone_numbers`, `get_call`) | Vapi MCP `https://mcp.vapi.ai/mcp` | Bearer API key; read-only for trunks and numbers |
 
 > [!IMPORTANT]
-> Vapi's inbound address embeds the credential: `{number}@{credential_id}.sip.vapi.ai` (EU: `.sip.eu.vapi.ai`). The credential must exist before the DIDWW inbound trunk can be created, because the trunk's destination host is that per-credential hostname. The skill follows this order. Never copy an ingress host from someone else's setup.
+> The DIDWW inbound trunk points at `sip.vapi.ai` (EU organizations: `sip.eu.vapi.ai`). Vapi recognises DIDWW's calls by their source: the Vapi inbound credential lists DIDWW's seven inbound signaling IPs (`46.19.209.14`, `46.19.210.14`, `46.19.212.14`, `46.19.213.14`, `46.19.214.14`, `46.19.215.14`, `185.238.173.14`) as inbound gateways, and the number is imported on that credential. This matches Vapi's [DIDWW SIP integration](https://docs.vapi.ai/advanced/sip/didww) guide.
 
 ## Before you begin
 
@@ -31,9 +31,9 @@ This skill automates the steps described in the [Vapi integration guide](https:/
   ```
 
   Then run `/mcp` inside Claude Code and sign in to the DIDWW User Panel when the browser opens. See [Getting started with DIDWW MCP](https://doc.didww.com/mcp/getting-started.html).
-- Access to DIDWW outbound trunks on the account, needed here even for inbound calls, because the Vapi credential that defines the inbound address carries the outbound trunk's credentials. If **Voice**, **Outbound Trunks** in the DIDWW User Panel shows **Get Access**, apply there first ([Get access to outbound trunks](https://doc.didww.com/voice/outbound-trunks/get-access.html)): it needs a business account with a company name and VAT/TAX ID, and DIDWW replies within 48 business hours.
+- For outbound calls and call transfers, access to DIDWW outbound trunks. Inbound calls work without it. If **Voice**, **Outbound Trunks** in the DIDWW User Panel shows **Get Access**, apply there ([Get access to outbound trunks](https://doc.didww.com/voice/outbound-trunks/get-access.html)): it needs a business account with a company name and VAT/TAX ID, and DIDWW replies within 48 business hours.
 - A Vapi account with an assistant, or its ID, and a Vapi API key from `dashboard.vapi.ai/org/api-keys` (shown once at creation).
-- A decision on region: US or EU.
+- The region your Vapi organization is hosted in: US or EU.
 
 ## Step 1. Install the skill
 
@@ -64,27 +64,35 @@ The skill confirms the number (or country to buy one in), the assistant (existin
 
 ## Step 3. What gets configured
 
-The order matters: the DIDWW outbound trunk comes first (you create it in the DIDWW User Panel), then Vapi, then the DIDWW inbound trunk. If the account still needs DIDWW's approval for outbound trunks, the whole connection waits for it, because the Vapi credential that defines the inbound address carries the outbound credentials.
+The DIDWW outbound trunk comes first when you want outbound calls or transfers (you create it in the DIDWW User Panel), then Vapi, then the DIDWW inbound trunk. Without outbound access, the skill sets up inbound calls alone and adds the rest later.
 
 ### DIDWW side
 
 The number and the inbound trunk are configured through the DIDWW MCP under your own account permissions. Claude Code asks for confirmation before each tool call unless you have allowed that tool. The outbound trunk is created by you in the DIDWW User Panel, because the MCP has no outbound trunk tools.
 
-- **Inbound SIP trunk.** Created last. Host is the per-credential hostname printed by the script in the Vapi step, port 5060. Vapi's signaling IPs are allowed on the trunk: US `44.229.228.186` and `44.238.177.138`, EU `63.182.83.170`. Missing IPs show up as 401 responses on inbound calls. The DID is assigned to this trunk.
-- **Outbound SIP trunk.** Needed only for calls the agent places. You create it in the DIDWW User Panel under **Voice**, **Outbound Trunks**, **Create New**, because the DIDWW MCP has no outbound trunk tools. If that page shows **Get Access**, the account is not approved for outbound calling yet: the application needs a business account with a company name and VAT/TAX ID, and DIDWW replies within 48 business hours. The inbound side can go live meanwhile. Choose the **Credentials & IP-Based** authentication method. It needs at least one **Allowed SIP IP address**: Vapi's signaling IPs, US `44.229.228.186/32` and `44.238.177.138/32`, EU `63.182.83.170/32`. Set **Media encryption mode** to match the platform side. DIDWW generates the username and password; give them to the agent in a file or environment variables rather than pasting them into the chat, and it passes them to the platform side. Enable the trunk if it shows **Disabled**. The host is the one nearest to the platform's region: `nyc.us.out.didww.com`, `lac.us.out.didww.com`, `mia.us.out.didww.com`, `fra.eu.out.didww.com`, `ams.eu.out.didww.com`, `sg.out.didww.com` or `hk.out.didww.com`.
+- **Inbound SIP trunk.** Created last. Host `sip.vapi.ai` (EU: `sip.eu.vapi.ai`), port 5060 for UDP or TCP or 5061 for TLS, with the same transport as the Vapi gateways. **Max transfers** is 1, which allows the SIP REFER requests Vapi sends to transfer a call. For transfers, **Authorization** is on, with the outbound trunk's username and password as auth user and password. The DID is assigned to this trunk.
+- **Outbound SIP trunk.** Needed only for calls the agent places. You create it in the DIDWW User Panel under **Voice**, **Outbound Trunks**, **Create New**, because the DIDWW MCP has no outbound trunk tools. If that page shows **Get Access**, the account is not approved for outbound calling yet: the application needs a business account with a company name and VAT/TAX ID, and DIDWW replies within 48 business hours. The inbound side can go live meanwhile. Choose the **Credentials & IP-Based** authentication method. It needs at least one **Allowed SIP IP address**: Vapi's signaling IPs, US `44.229.228.186/32` and `44.238.177.138/32`, EU `63.182.83.170/32` (per [Vapi's SIP networking page](https://docs.vapi.ai/advanced/sip/sip-networking)), plus DIDWW's seven inbound signaling IPs listed above, which transfers need. Never use `0.0.0.0/0`. Set **Media encryption mode** to match the platform side. DIDWW generates the username and password; give them to the agent in a file or environment variables rather than pasting them into the chat, and it passes them to the platform side. Enable the trunk if it shows **Disabled**. The host is the one nearest to the platform's region: `nyc.us.out.didww.com`, `lac.us.out.didww.com`, `mia.us.out.didww.com`, `fra.eu.out.didww.com`, `ams.eu.out.didww.com`, `sg.out.didww.com` or `hk.out.didww.com`.
 - **Spend controls.** On the outbound trunk, under **Termination**: **24 Hour Limit (USD)** at its minimum of 50 (the default is 3000, and DIDWW disables the trunk when the limit is reached), **Capacity limit** matching the expected concurrency, and the usage limit notification on. Under **CLI Settings**, allow only the connected number as caller ID; under **Destination Dialing Settings**, reject all destinations except the countries the agent calls. On the inbound trunk the skill sets a capacity limit through the MCP.
 
 ### Vapi side
 
-One run of `scripts/connect.py` creates the `byo-sip-trunk` credential (gateway is the DIDWW outbound host, the outbound authentication plan is the DIDWW outbound trunk's username and password) and the `byo-phone-number` bound to the assistant. It prints the exact ingress host for the DIDWW inbound trunk.
+One run of `scripts/connect.py` creates:
+
+1. The **DIDWW Outbound Trunk** credential: one outbound-only gateway at the DIDWW outbound host, with the DIDWW outbound trunk's username and password.
+2. The **DIDWW Inbound Trunk** credential: one inbound-only gateway per DIDWW signaling IP, carrying the same username and password so that transfers authenticate.
+3. The `byo-phone-number`, in E.164 with the `+`, on the inbound credential and bound to the assistant.
+
+It then prints the values for the DIDWW inbound and outbound trunks.
 
 ```bash
-VAPI_API_KEY=... python3 ~/.claude/skills/didww-to-vapi/scripts/connect.py \
+DIDWW_TRUNK_PASS=... VAPI_API_KEY=... python3 ~/.claude/skills/didww-to-vapi/scripts/connect.py \
   --number +33144556677 --didww-host fra.eu.out.didww.com \
-  --didww-user USER --didww-pass PASS --assistant ASSISTANT_ID --eu
+  --didww-user USER --assistant ASSISTANT_ID --eu
 ```
 
-Drop `--eu` for the US region. The script sets `numberE164CheckEnabled` to false so that DIDWW numbers import without format rejections.
+`--eu` sends the API calls to `api.eu.vapi.ai` and points DIDWW at `sip.eu.vapi.ai`; drop it for a US organization. `--transport tcp` or `--transport tls` changes the transport (TLS uses port 5061). Leave out the three `--didww-*` values for an inbound-only setup. The password can be given as `--didww-pass` or, better, in `DIDWW_TRUNK_PASS`, so it stays out of shell history.
+
+For transfers, the assistant needs a Vapi **Transfer Call** tool with a SIP destination `sip:+E164@<DIDWW outbound host>` (for example `sip:+447700900123@fra.eu.out.didww.com`), blind transfer and SIP verb REFER, as in Vapi's guide.
 
 ## Step 4. Verify the connection
 
@@ -100,9 +108,9 @@ The skill carries this failure map and works through it when a test call fails.
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| Inbound 401 | Vapi's signaling IPs are not allowed on the DIDWW trunk, or the trunk points at bare `sip.vapi.ai` instead of the per-credential host | Add the IPs; set the host to `<credential_id>.sip.vapi.ai` |
-| Outbound authentication failures | The credential's outbound authentication plan does not match the DIDWW outbound trunk | Regenerate the DIDWW credentials and re-run the script with `--update` |
-| Number rejected on create | Format check | The script disables the E.164 check; try the number without the `+` |
+| Inbound calls never reach the assistant | The number is not on the inbound credential, a DIDWW signaling IP is missing from its gateways, the trunk points at the other region's host, or the transport and port differ between the two sides | Re-run the script, or fix the gateways and host |
+| Outbound authentication failures | The credentials in Vapi do not match the DIDWW outbound trunk | After regenerating them, run the script with `--rotate <outbound credential id> --rotate <inbound credential id> --didww-user USER` (password in `DIDWW_TRUNK_PASS`), and put the same pair in the inbound trunk's Authorization |
+| Transfer fails | **Max transfers** is 0, the inbound trunk's Authorization is off or stale, or DIDWW's signaling IPs are missing from the outbound trunk's Allowed SIP IP addresses | Fix the trunk settings in the DIDWW User Panel |
 | Outbound call rejected by DIDWW | Source IP not in the outbound trunk's Allowed SIP IP addresses, caller ID not allowed in its CLI settings, destination not allowed, or the 24-hour limit reached, which disables the trunk | Check the outbound trunk in the DIDWW User Panel and re-enable it |
 
 ## Keys, billing and safety
@@ -116,7 +124,7 @@ The skill carries this failure map and works through it when a test call fails.
 
 ## Additional resources
 
-- [Vapi integration guide](https://doc.didww.com/integrations/vapi/index.html): the same connection configured by hand.
+- [Vapi integration guide](https://doc.didww.com/integrations/vapi/index.html): the same connection configured by hand. Vapi's own version: [DIDWW SIP integration](https://docs.vapi.ai/advanced/sip/didww).
 - [Inbound trunks](https://doc.didww.com/voice/inbound-trunks/index.html) and [Outbound trunks](https://doc.didww.com/voice/outbound-trunks/index.html) in the DIDWW documentation.
 - [DIDWW MCP](https://doc.didww.com/mcp/index.html): the connector the skill uses for the carrier side.
 - Skill source and tests: [`skills/didww-to-vapi`](https://github.com/didww/ai/tree/main/skills/didww-to-vapi) in the didww/ai repository. Package: [npmjs.com/package/didww-to-vapi](https://www.npmjs.com/package/didww-to-vapi).

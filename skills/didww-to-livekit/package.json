@@ -1,6 +1,6 @@
 {
   "name": "didww-to-livekit",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Connect a DIDWW phone number to a LiveKit Agents worker over SIP, on LiveKit Cloud or self-hosted: inbound trunk, dispatch rule to a named agent, optional outbound trunk.",
   "bin": {
     "didww-to-livekit": "bin/install.js"

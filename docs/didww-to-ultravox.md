@@ -75,11 +75,11 @@ Then patch the account settings as needed:
 
 ```bash
 ULTRAVOX_API_KEY=... python3 ~/.claude/skills/didww-to-ultravox/scripts/connect.py \
-  --allow-cidr <DIDWW signaling range> --allow-agent 'agent_.*' \
+  --allow-didww --allow-agent 3f2b6c1e-8a4d-4e2f-9b7a-1c2d3e4f5a6b \
   --fallback-url https://your.host/route
 ```
 
-`--allow-cidr` (repeatable) sets `allowedCidrRanges`, `--allow-agent` sets `allowedAgents`, `--allow-all-agents` accepts every agent, and `--fallback-url` sets the `fallbackHandler`. Outbound calls are placed per call with `POST /api/calls` and `medium.sip.outgoing` carrying the DIDWW outbound host and the DIDWW outbound trunk credentials.
+`--allow-didww` restricts `allowedCidrRanges` to DIDWW's address ranges, `46.19.208.0/21` and `185.238.172.0/22`, which cover every DIDWW signaling location listed in [General SIP Information](https://doc.didww.com/voice/inbound-trunks/technical-data/sip.html). The allowlist is Ultravox's authentication for incoming calls: DIDWW's calls are accepted only once its ranges are on the list. Never use `0.0.0.0/0`, which accepts INVITEs from any address and which Ultravox itself advises against. `--allow-cidr` (repeatable, IPv4 only) adds other ranges. `--allow-agent AGENT_UUID[=TO_USER_REGEX]` (repeatable, up to 20) adds an entry to `allowedAgents`; without a pattern, the agent answers `agent_<agent_id>` addresses, and with one, for example `^\+?33144556677$`, it answers the DID itself. `--allow-all-agents` accepts every agent, and `--fallback-url` (https) sets the `fallbackHandler`. Ultravox generates the handler's signing secret; the script redacts it, and `--show --show-secrets` prints it when you configure the handler, which should verify every request. Outbound calls are placed per call with `POST /api/calls` and `medium.sip.outgoing` carrying the DIDWW outbound host and the DIDWW outbound trunk credentials.
 
 ### DIDWW side
 
@@ -104,7 +104,7 @@ The skill carries this failure map and works through it when a test call fails.
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | Inbound 603 rejected | The To address matches no allowed agent and no fallback handler is set | Fix the `allowedAgents` pattern or add the fallback URL |
-| Inbound never arrives | The CIDR allowlist is missing DIDWW's signaling range, or the trunk sends the dialed number as user part while routing expected an agent address | Add the range; switch to the fallback shape |
+| Inbound never arrives | The CIDR allowlist is missing DIDWW's ranges (`--allow-didww`), or the trunk sends the dialed number as user part while routing expected an agent address | Add the range; switch to the fallback shape |
 | Outbound authentication failures | Credentials in `medium.sip.outgoing` do not match the DIDWW outbound trunk | Use the DIDWW outbound trunk's generated username and password |
 | Outbound call rejected by DIDWW | Source IP not in the outbound trunk's Allowed SIP IP addresses, caller ID not allowed in its CLI settings, destination not allowed, or the 24-hour limit reached, which disables the trunk | Check the outbound trunk in the DIDWW User Panel and re-enable it |
 

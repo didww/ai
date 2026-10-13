@@ -81,8 +81,9 @@ created by the user in the DIDWW panel.
 ## Platform ingress cheat sheet
 
 ElevenLabs `sip.rtc.elevenlabs.io:5060` (TCP/TLS, digest). Vapi
-`{credential_id}.sip.vapi.ai` (create the credential FIRST; allowlist
-their signaling IPs). Retell `sip.retellai.com` (TCP). Ultravox: the
+`sip.vapi.ai` (EU org `sip.eu.vapi.ai`; Vapi's inbound credential lists
+DIDWW's seven signaling IPs as gateways; `max_transfers` 1 for
+transfers). Retell `sip.retellai.com` (TCP). Ultravox: the
 account's own SIP domain, read from `GET /api/sip`, address-based
 routing. Vogent `sip.vogent.ai`. OpenAI
 `sip:{project_id}@sip.api.openai.com;transport=tls` (TLS+SRTP
@@ -95,7 +96,8 @@ TCP/UDP, 5061 TLS, digest; region-pinned
 numbers on its trunk need the `+`).
 
 Allowed SIP IPs for the DIDWW outbound trunk (the platform's egress):
-Vapi US `44.229.228.186/32`, `44.238.177.138/32`, EU `63.182.83.170/32`.
+Vapi US `44.229.228.186/32`, `44.238.177.138/32`, EU `63.182.83.170/32`,
+plus DIDWW's own seven inbound signaling IPs for transfers.
 Retell `18.98.16.120/30`, `3.42.144.0/23`, `153.57.128.0/18` (plus
 `143.223.88.0/21`, `161.115.160.0/19` for some US traffic). LiveKit
 Cloud (Canada, EU, India, Japan, US) `143.223.88.0/21`,

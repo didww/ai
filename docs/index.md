@@ -10,7 +10,7 @@ DIDWW publishes a family of **agent skills** for **Claude Code** that put an AI 
 |---|---|---|---|
 | [didww-connect](didww-connect.md) | Any (hub) | `npx didww-connect` | Platform choice, universal DIDWW wiring, health monitor |
 | [didww-to-elevenlabs](didww-to-elevenlabs.md) | ElevenLabs | `npx didww-to-elevenlabs` | MCP on both sides plus one import call |
-| [didww-to-vapi](didww-to-vapi.md) | Vapi | `npx didww-to-vapi` | REST script; credential before trunk |
+| [didww-to-vapi](didww-to-vapi.md) | Vapi | `npx didww-to-vapi` | REST script; inbound + outbound credentials, number, transfers |
 | [didww-to-retell](didww-to-retell.md) | Retell AI | `npx didww-to-retell` | Fully MCP-driven when Retell's MCP is connected |
 | [didww-to-ultravox](didww-to-ultravox.md) | Ultravox | `npx didww-to-ultravox` | Address-based routing; no number import |
 | [didww-to-vogent](didww-to-vogent.md) | Vogent | `npx didww-to-vogent` | REST import plus one dashboard click |

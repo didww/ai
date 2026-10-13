@@ -94,6 +94,8 @@ LIVEKIT_URL=wss://<project>.livekit.cloud LIVEKIT_API_KEY=... LIVEKIT_API_SECRET
 
 `--allow-ip` adds a CIDR allowlist; on LiveKit Cloud, `allowed_addresses` is enabled per project by LiveKit support, while digest authentication needs no enablement.
 
+`LIVEKIT_URL` must be `wss://` or `https://`; plain `ws://` or `http://` is accepted only for a server on localhost. The passwords can come from `LIVEKIT_INBOUND_PASS` and `DIDWW_TRUNK_PASS` instead of `--inbound-pass` and `--outbound-pass`, which keeps them out of shell history.
+
 To create the trunks by hand instead, use `lk sip inbound create`, `lk sip dispatch create` and `lk sip outbound create`, or the LiveKit Cloud dashboard: **Telephony**, **SIP trunks**, **Create new trunk**, **JSON editor** tab. The digest fields are available in the JSON editor.
 
 ### DIDWW side
