@@ -2,6 +2,16 @@
 
 All notable changes to the skills in this repository. Each skill is versioned independently in its `package.json`.
 
+## didww-to-elevenlabs 1.1.1, didww-connect 1.0.3 (2026-10-27)
+
+Found while setting up a DIDWW number on an ElevenLabs agent with the skill; every fix was confirmed by real inbound calls and a real live-agent transfer.
+
+- **Number format.** `import_number.py` only accepted numbers with a leading `+`. The DIDWW inbound trunk sends the called number as `{DID}`, without a plus, and DIDWW's ElevenLabs guide says to import it in E.164 without the `+`. The script now accepts either form and always imports the number without the plus; the docs, the example command and the failure map say the same.
+- **Media encryption.** New `--media-encryption disabled|allowed|required` to match the DIDWW trunks (`disabled` for SRTP mode Disable, the DIDWW default). It was hardcoded to `allowed`, which stays the default.
+- **ElevenLabs MCP host.** `https://api.elevenlabs.io/v1/mcp` names `https://api.us.elevenlabs.io/v1/mcp` as its resource in its OAuth protected-resource metadata, and Claude Code then refuses to start sign-in ("Couldn't start sign-in for elevenlabs"). Every reference now uses `https://api.us.elevenlabs.io/v1/mcp`.
+- **Live-agent transfers.** The skill said it covered transfers but had no transfer steps, and its invented inbound digest pair breaks them. New transfer section following DIDWW's AI-to-Live Agent guide: SIP REFER; DIDWW's seven inbound signaling IPs on the outbound trunk; the outbound trunk's username and password on the DIDWW inbound trunk and on the ElevenLabs number; `max_transfers` 1 or more; the inbound trunk's network protocol matching the outbound trunk; the agent's `transfer_to_number` tool with `transfer_type: sip_refer` to a `sip_uri` at the DIDWW outbound host. When outbound calls or transfers are planned, the skill uses the outbound pair from the start. New `import_number.py --update PHONE_NUMBER_ID` switches an imported number's inbound credentials (`PATCH /v1/convai/phone-numbers/{id}`) without the password passing through the chat. New failure-map rows for transfers, the MCP sign-in error and 409 `phone_number_conflict`.
+- `didww-connect`: the ElevenLabs MCP host in `references/panels-and-billing.md`, and the ElevenLabs number format and transfer requirements in the platform cheat sheet.
+
 ## Security and correctness review (2026-10-13)
 
 `didww-to-openai-realtime` 1.1.0, `didww-to-vapi` 1.1.0, `didww-to-ultravox` 1.1.0, `didww-to-elevenlabs` 1.1.0, `didww-to-livekit` 1.1.1, and 1.0.2 of `didww-connect`, `didww-to-retell`, `didww-to-vogent` and `didww-to-xai`. Started from an automated review; every finding was reproduced in code and checked against the vendor's own documentation or OpenAPI schema before it was fixed, and the request shapes of all scripts were rechecked against those schemas.
