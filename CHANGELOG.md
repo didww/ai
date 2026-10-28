@@ -2,6 +2,20 @@
 
 All notable changes to the skills in this repository. Each skill is versioned independently in its `package.json`.
 
+## didww-to-vogent 1.0.3, didww-connect 1.0.3 (2026-11-03)
+
+Found while connecting a DIDWW number to a Vogent agent with the skill, verified on real calls, and aligned with DIDWW's [Vogent integration guide](https://doc.didww.com/integrations/vogent/index.html): the skill and its docs page now follow the guide's three sections (Route Incoming Calls, Enable Outbound Calling, Connect DIDWW SIP Trunks in Vogent), its terms and its troubleshooting.
+
+- **Transfers work only as Warm Transfer.** Cold Transfer (SIP REFER, target built from the phone number, no SIP URI setting) is marked `TRANSFERRED` in Vogent, but DIDWW never places the call: no outbound CDR, also with `0.0.0.0/0` open. Warm Transfer makes Vogent dial the destination itself through the number's `terminationUri`, the DIDWW outbound trunk, from Vogent's servers. New "Live-agent transfers" section following the guide's Step 4: the Call Transfer function (`POST /api/functions`, `allowedNumbers`, never a number linked to the agent), the Transfer Type, which only the dashboard sets (new functions default to Cold; Prompted needs a prompt, which switching to Cold and back clears), adding it to the agent (`PUT /api/agents/{id}` with `linkedFunctionDefinitionInputs`) and the prompt line.
+- **The outbound trunk is required even for inbound-only**, because Vogent imports a number only with an outbound trunk's host and credentials (the docs said "needed only for calls the agent places").
+- **Outbound trunk Allowed SIP IPs** as in the guide: Vogent's enterprise ranges plus DIDWW's seven inbound signaling IPs; without enterprise ranges, DIDWW support; `0.0.0.0/0` only for temporary testing at the user's own risk; `0.0.0.0/32` matches nothing.
+- **Inbound trunk:** UDP 5060, User Part of R-URI `{DID}` (Vogent also accepts `+{DID}`), and Authorization with the outbound trunk's username and password instead of an invented digest pair.
+- **Linking the number to the agent is not dashboard-only.** `PUT /api/phone_numbers/{id}` with `{"agentId"}` works. New `connect.py --agent` links right after the import, and `--phone-id ID --agent ID` links a number imported earlier; the "MANUAL STEP" print is gone.
+- **Opening line:** without one the agent waits for the caller and the call sounds silent. Standard agents: Opening Line, Inbound calls Only; flow agents: `flowDefinition.openingLineType` `INBOUND_ONLY`.
+- **Testing** as in the guide's Step 5, including `POST /api/dials` for an outbound call and Dial History's Transferred status with the `transfer_call` function.
+- **Failure map** from the guide's troubleshooting: 401/403/407 on outbound calls or transfers, 484 Address Incomplete, rejection after authentication, the caller shown with an extra `+1` (cosmetic; `cli_prefix` `+` is a likely fix, marked untested), and the API key's secret versus its ID.
+- `didww-connect`: Vogent's row, ingress notes and allowed-IP notes follow the guide.
+
 ## Security and correctness review (2026-10-13)
 
 `didww-to-openai-realtime` 1.1.0, `didww-to-vapi` 1.1.0, `didww-to-ultravox` 1.1.0, `didww-to-elevenlabs` 1.1.0, `didww-to-livekit` 1.1.1, and 1.0.2 of `didww-connect`, `didww-to-retell`, `didww-to-vogent` and `didww-to-xai`. Started from an automated review; every finding was reproduced in code and checked against the vendor's own documentation or OpenAPI schema before it was fixed, and the request shapes of all scripts were rechecked against those schemas.
