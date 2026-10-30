@@ -18,6 +18,8 @@ MAX_BYTES = 20 * 1024 * 1024
 def fetch(url):
     if "://" not in url:  # a local path, for tests and manual runs
         return open(url, "rb").read()
+    if urllib.parse.urlparse(url).scheme != "https":
+        raise ValueError(f"{url}: only https sources are allowed")
     with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "didww-skills-mirror"}), timeout=60) as r:
         data = r.read(MAX_BYTES + 1)
     if len(data) > MAX_BYTES:
@@ -59,9 +61,13 @@ def mirror(source, dest):
     staging = tempfile.mkdtemp(prefix=".agent-skills-new-", dir=parent)
     try:
         for fname, data in files.items():
-            with open(os.path.join(staging, fname), "wb") as f:
+            # Names come from the downloaded index: keep every write inside staging.
+            target = os.path.realpath(os.path.join(staging, os.path.basename(fname)))
+            if os.path.commonpath([target, os.path.realpath(staging)]) != os.path.realpath(staging):
+                raise ValueError(f"{fname}: would be written outside {dest}")
+            with open(target, "wb") as f:
                 f.write(data)
-            os.chmod(os.path.join(staging, fname), 0o644)
+            os.chmod(target, 0o644)
         os.chmod(staging, 0o755)
     except Exception:
         shutil.rmtree(staging, ignore_errors=True)

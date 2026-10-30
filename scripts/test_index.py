@@ -75,6 +75,12 @@ with tempfile.TemporaryDirectory() as tmp:
         refused = True
     check("mirror refuses URLs pointing at other hosts", refused)
 
+    try:
+        mirror_index.fetch("file:///etc/passwd"); refused = False
+    except ValueError:
+        refused = True
+    check("mirror refuses non-https sources", refused)
+
     raw = io.BytesIO()
     with tarfile.open(fileobj=raw, mode="w:gz") as tar:
         for n in ("SKILL.md", "../escape"):
