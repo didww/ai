@@ -2,6 +2,12 @@
 
 All notable changes to the skills in this repository. Each skill is versioned independently in its `package.json`.
 
+## Agent Skills discovery index (2026-10-30)
+
+- New `.well-known/agent-skills/index.json` in the [Agent Skills discovery](https://github.com/cloudflare/agent-skills-discovery-rfc) format v0.2.0, the same format Telnyx serves at `telnyx.com/.well-known/agent-skills/index.json`. Every skill is a `type: "archive"` entry: a `.tar.gz` with `SKILL.md`, `scripts/`, `references/` and `LICENSE` at the root, and its sha256 `digest`. Extra fields (`version`, `documentation`, `install`) are ignored by clients that do not know them.
+- `scripts/build_index.py` generates the folder from `skills/` (descriptions from the SKILL.md frontmatter, versions from `package.json`); archives are rewritten only when their contents change, so digests stay stable. `--check` runs in `scripts/test.sh` and CI.
+- `scripts/mirror_index.py` lets didww.com keep its copy current from GitHub on a schedule: it verifies every digest and archive before swapping the new set in, and leaves the live folder untouched on any failure. Handoff for the web team: [`docs/agent-skills-index.md`](docs/agent-skills-index.md).
+
 ## Security and correctness review (2026-10-13)
 
 `didww-to-openai-realtime` 1.1.0, `didww-to-vapi` 1.1.0, `didww-to-ultravox` 1.1.0, `didww-to-elevenlabs` 1.1.0, `didww-to-livekit` 1.1.1, and 1.0.2 of `didww-connect`, `didww-to-retell`, `didww-to-vogent` and `didww-to-xai`. Started from an automated review; every finding was reproduced in code and checked against the vendor's own documentation or OpenAPI schema before it was fixed, and the request shapes of all scripts were rechecked against those schemas.
