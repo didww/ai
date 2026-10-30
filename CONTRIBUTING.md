@@ -14,7 +14,8 @@ skills/<name>/        one Claude Code skill = one npm package
   tests/              request-shape tests against stubbed HTTP; no keys, no network
   package.json        npm name = skill name; files whitelist
 docs/                 pages for doc.didww.com, one per skill
-scripts/              family-wide test and publish runners
+scripts/              family-wide test and publish runners, the index builder and the website mirror
+.well-known/agent-skills/  generated: discovery index.json + <name>.tar.gz per skill (never edit by hand)
 ```
 
 ## Before you open a pull request
@@ -24,6 +25,7 @@ scripts/              family-wide test and publish runners
 3. Never commit credentials, account identifiers or real phone numbers. Tests use stubbed HTTP and fake keys.
 4. Verify platform facts against the platform's current documentation and update the "verified" date at the end of the skill's `SKILL.md`.
 5. If you change a skill's behaviour, update its page in `docs/` in the same change.
+6. Run `python3 scripts/build_index.py` and commit `.well-known/` with the change. CI fails while the index or an archive is out of date with `skills/`.
 
 ## Adding a platform
 

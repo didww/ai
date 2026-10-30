@@ -10,6 +10,7 @@ Open-source tools from [DIDWW](https://www.didww.com/) for building AI voice age
 | [`skills/`](skills/) | Nine Claude Code agent skills that connect a DIDWW number to an AI voice platform. Each is its own npm package. |
 | [`docs/`](docs/) | Documentation pages for the skills, written for [doc.didww.com](https://doc.didww.com/). |
 | [`scripts/`](scripts/) | Family-wide test and publish runners used by maintainers and CI. |
+| [`.well-known/agent-skills/`](.well-known/agent-skills/) | The [Agent Skills discovery](https://github.com/cloudflare/agent-skills-discovery-rfc) index plus one archive per skill, generated from `skills/`, for didww.com to serve at `/.well-known/agent-skills/index.json`. |
 
 ## Skills
 
@@ -34,6 +35,8 @@ npx didww-connect
 npx didww-to-livekit
 ```
 
+Any agent that reads the Agent Skills discovery format can also find all of them from one URL, [`.well-known/agent-skills/index.json`](.well-known/agent-skills/index.json), which lists every skill with a sha256-verified `.tar.gz`.
+
 Straight from this repository, without the npm registry: `npx skills add didww/ai --skill <name>`, or `npx skills add didww/ai --list` to see all nine. Restart Claude Code after installing.
 
 ### Requirements
@@ -51,6 +54,7 @@ The installers copy files and nothing else. The skills store no credentials; pla
 bash scripts/test.sh            # every skill's checks: stdlib Python plus node, no network, no keys
 bash scripts/publish.sh         # publish all nine to npm (after npm login)
 bash scripts/publish.sh didww-to-vapi   # publish one
+python3 scripts/build_index.py  # regenerate .well-known/agent-skills/ after changing a skill
 ```
 
 GitHub Actions runs the same tests on every push and pull request. See [CONTRIBUTING.md](CONTRIBUTING.md) for the skill layout, versioning and how to add a platform, and [CHANGELOG.md](CHANGELOG.md) for releases.
