@@ -10,18 +10,18 @@
       "type": "archive",
       "description": "Connect a DIDWW phone number to ANY AI voice platform: helps choose the platform, then wires the SIP trunk pair and number. Use whenever the user wants a voice AI agent on a DIDWW number and has not committed to a platform, asks which AI platform to use with DIDWW, or names a platform that has no dedicated didww-to-X skill installed. Covers ElevenLabs, Vapi, Retell, Ultravox, Vogent, OpenAI Realtime, xAI, LiveKit and the enterprise-gated platforms.",
       "url": "didww-connect.tar.gz",
-      "digest": "sha256:50a913c53d738eeb409f565143d176998a04edd8008dcbdbf0777a056a52a9f5",
-      "version": "1.0.2",
+      "digest": "sha256:8f6b35f5f1c09425fd328d936dc37b5ba7315ff016497827bf7e9f0d69318812",
+      "version": "1.0.3",
       "documentation": "https://github.com/didww/ai/blob/main/docs/didww-connect.md",
       "install": "npx didww-connect"
     },
     {
       "name": "didww-to-elevenlabs",
       "type": "archive",
-      "description": "Connect a DIDWW phone number to an ElevenLabs voice agent over SIP, as automatically as both platforms allow. Use whenever the user wants an ElevenLabs agent (Agents Platform, Conversational AI) on a real phone number via DIDWW, mentions pairing DIDWW with ElevenLabs, importing a SIP trunk into ElevenLabs, sip.rtc.elevenlabs.io, or debugging calls between the two. Covers inbound, outbound, transfers and verification.",
+      "description": "Connect a DIDWW phone number to an ElevenLabs voice agent over SIP, as automatically as both platforms allow. Use whenever the user wants an ElevenLabs agent (Agents Platform, Conversational AI) on a real phone number via DIDWW, mentions pairing DIDWW with ElevenLabs, importing a SIP trunk into ElevenLabs, sip.rtc.elevenlabs.io, live-agent transfers (SIP REFER), or debugging calls between the two. Covers inbound, outbound, transfers and verification.",
       "url": "didww-to-elevenlabs.tar.gz",
-      "digest": "sha256:522f41eada5f5e6269f9ea71de7452d13e57d077d11643abb6b222fc50bc1e9c",
-      "version": "1.1.0",
+      "digest": "sha256:fc1e6a0d8d0a1beeb47b5fd2eeb0eee7cf3757881c4481198b68830f7c706f7f",
+      "version": "1.1.1",
       "documentation": "https://github.com/didww/ai/blob/main/docs/didww-to-elevenlabs.md",
       "install": "npx didww-to-elevenlabs"
     },

@@ -33,7 +33,9 @@ keys where a column says so.
 - Panel `elevenlabs.io/app`. Keys: `elevenlabs.io/app/settings/api-keys`
   (workspace Service Account keys: profile icon, Workspace settings,
   Service Accounts). Prefer the OAuth MCP
-  (`api.elevenlabs.io/v1/mcp`) for everything it covers.
+  (`https://api.us.elevenlabs.io/v1/mcp`) for everything it covers. Not
+  `api.elevenlabs.io/v1/mcp`: its OAuth metadata names the `api.us`
+  resource, and Claude Code then refuses to start sign-in.
 - Money: monthly SUBSCRIPTION tiers granting credits (Free includes 15
   agent minutes; Starter 6 USD/75 min; Creator 22 USD/275 min; Pro 99
   USD/1,238 min). Extra agent minutes about 0.08 USD; concurrency above

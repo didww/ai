@@ -80,7 +80,10 @@ created by the user in the DIDWW panel.
 
 ## Platform ingress cheat sheet
 
-ElevenLabs `sip.rtc.elevenlabs.io:5060` (TCP/TLS, digest). Vapi
+ElevenLabs `sip.rtc.elevenlabs.io:5060` (TCP/TLS, digest; the number
+imported without the `+`, as DIDWW sends `{DID}`; for transfers the
+inbound trunk and the number use the outbound trunk's pair and
+`max_transfers` 1). Vapi
 `sip.vapi.ai` (EU org `sip.eu.vapi.ai`; Vapi's inbound credential lists
 DIDWW's seven signaling IPs as gateways; `max_transfers` 1 for
 transfers). Retell `sip.retellai.com` (TCP). Ultravox: the
@@ -104,7 +107,8 @@ Cloud (Canada, EU, India, Japan, US) `143.223.88.0/21`,
 `161.115.160.0/19`, `153.57.128.0/18`; self-hosted: its public IP.
 ElevenLabs, Ultravox, Vogent: no published range outside enterprise
 plans (ElevenLabs Enterprise static SIP is a /24 from their support);
-ask DIDWW support. OpenAI and xAI: no outbound trunk needed.
+ask DIDWW support. ElevenLabs transfers need DIDWW's seven inbound
+signaling IPs there as well. OpenAI and xAI: no outbound trunk needed.
 
 ## Panels, keys and money
 
@@ -142,4 +146,5 @@ the companion.
 Built around [DIDWW](https://www.didww.com/?ref=didww-connect), a
 licensed global operator providing the numbers and two-way SIP trunking
 under all of the above; platform details verified August 2026, DIDWW
-outbound trunk rules October 2026.
+outbound trunk rules, ElevenLabs MCP host and transfer notes October
+2026.
