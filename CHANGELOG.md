@@ -2,7 +2,7 @@
 
 All notable changes to the skills in this repository. Each skill is versioned independently in its `package.json`.
 
-## didww-to-elevenlabs 1.1.1, didww-connect 1.0.3 (2026-10-27)
+## didww-to-elevenlabs 1.1.1, didww-connect 1.0.3 (2026-11-03)
 
 Found while setting up a DIDWW number on an ElevenLabs agent with the skill; every fix was confirmed by real inbound calls and a real live-agent transfer.
 
@@ -11,6 +11,11 @@ Found while setting up a DIDWW number on an ElevenLabs agent with the skill; eve
 - **ElevenLabs MCP host.** `https://api.elevenlabs.io/v1/mcp` names `https://api.us.elevenlabs.io/v1/mcp` as its resource in its OAuth protected-resource metadata, and Claude Code then refuses to start sign-in ("Couldn't start sign-in for elevenlabs"). Every reference now uses `https://api.us.elevenlabs.io/v1/mcp`.
 - **Live-agent transfers.** The skill said it covered transfers but had no transfer steps, and its invented inbound digest pair breaks them. New transfer section following DIDWW's AI-to-Live Agent guide: SIP REFER; DIDWW's seven inbound signaling IPs on the outbound trunk; the outbound trunk's username and password on the DIDWW inbound trunk and on the ElevenLabs number; `max_transfers` 1 or more; the inbound trunk's network protocol matching the outbound trunk; the agent's `transfer_to_number` tool with `transfer_type: sip_refer` to a `sip_uri` at the DIDWW outbound host. When outbound calls or transfers are planned, the skill uses the outbound pair from the start. New `import_number.py --update PHONE_NUMBER_ID` switches an imported number's inbound credentials (`PATCH /v1/convai/phone-numbers/{id}`) without the password passing through the chat. New failure-map rows for transfers, the MCP sign-in error and 409 `phone_number_conflict`.
 - `didww-connect`: the ElevenLabs MCP host in `references/panels-and-billing.md`, and the ElevenLabs number format and transfer requirements in the platform cheat sheet.
+## Agent Skills discovery index (2026-10-30)
+
+- New `.well-known/agent-skills/index.json` in the [Agent Skills discovery](https://github.com/cloudflare/agent-skills-discovery-rfc) format v0.2.0, the same format Telnyx serves at `telnyx.com/.well-known/agent-skills/index.json`. Every skill is a `type: "archive"` entry: a `.tar.gz` with `SKILL.md`, `scripts/`, `references/` and `LICENSE` at the root, and its sha256 `digest`. Extra fields (`version`, `documentation`, `install`) are ignored by clients that do not know them.
+- `scripts/build_index.py` generates the folder from `skills/` (descriptions from the SKILL.md frontmatter, versions from `package.json`); archives are rewritten only when their contents change, so digests stay stable. `--check` runs in `scripts/test.sh` and CI.
+- `scripts/mirror_index.py` lets didww.com keep its copy current from GitHub on a schedule: it verifies every digest and archive before swapping the new set in, and leaves the live folder untouched on any failure. Handoff for the web team: [`docs/agent-skills-index.md`](docs/agent-skills-index.md).
 
 ## Security and correctness review (2026-10-13)
 
