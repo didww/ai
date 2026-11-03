@@ -15,6 +15,11 @@ Found while connecting a DIDWW number to a Vogent agent with the skill, verified
 - **Testing** as in the guide's Step 5, including `POST /api/dials` for an outbound call and Dial History's Transferred status with the `transfer_call` function.
 - **Failure map** from the guide's troubleshooting: 401/403/407 on outbound calls or transfers, 484 Address Incomplete, rejection after authentication, the caller shown with an extra `+1` (cosmetic; `cli_prefix` `+` is a likely fix, marked untested), and the API key's secret versus its ID.
 - `didww-connect`: Vogent's row, ingress notes and allowed-IP notes follow the guide.
+## Agent Skills discovery index (2026-10-30)
+
+- New `.well-known/agent-skills/index.json` in the [Agent Skills discovery](https://github.com/cloudflare/agent-skills-discovery-rfc) format v0.2.0, the same format Telnyx serves at `telnyx.com/.well-known/agent-skills/index.json`. Every skill is a `type: "archive"` entry: a `.tar.gz` with `SKILL.md`, `scripts/`, `references/` and `LICENSE` at the root, and its sha256 `digest`. Extra fields (`version`, `documentation`, `install`) are ignored by clients that do not know them.
+- `scripts/build_index.py` generates the folder from `skills/` (descriptions from the SKILL.md frontmatter, versions from `package.json`); archives are rewritten only when their contents change, so digests stay stable. `--check` runs in `scripts/test.sh` and CI.
+- `scripts/mirror_index.py` lets didww.com keep its copy current from GitHub on a schedule: it verifies every digest and archive before swapping the new set in, and leaves the live folder untouched on any failure. Handoff for the web team: [`docs/agent-skills-index.md`](docs/agent-skills-index.md).
 
 ## Security and correctness review (2026-10-13)
 
