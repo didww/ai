@@ -28,7 +28,7 @@ Ask what matters most and map:
 | API-first, EU region, BYO model keys | Vapi | REST scripts (their MCP is read-only for numbers) |
 | Max MCP automation, one-call setup | Retell | Their MCP imports numbers and creates agents |
 | Richest transfers, own speech model | Ultravox | REST; address-based routing, no number import |
-| Small and simple | Vogent | REST import; agent binding is one dashboard click |
+| Small and simple | Vogent | REST import and agent linking; warm transfer type is one dashboard setting |
 | Developer owns the brain, minimal stack | OpenAI Realtime or xAI | Webhook backend required, not no-code |
 | Any STT/LLM/TTS combination (Claude as the brain), open source | LiveKit | REST script creates trunk + dispatch rule; the worker is code |
 | Enterprise procurement in play | Bland, Synthflow, Regal | Sales-gated; never promise same-day |
@@ -47,7 +47,8 @@ created by the user in the DIDWW panel.
    preferred, media encryption matched to the platform's setting,
    `capacity_limit` = the concurrent calls the user expects. Attach the
    DID.
-3. Outbound trunk (panel, only if the agent places calls):
+3. Outbound trunk (panel, only if the agent places calls or transfers;
+   Vogent always, its number import needs the trunk's credentials):
    - Access first: under Voice, Outbound Trunks a Get Access button means
      the account is not approved yet. The application needs a business
      account (company name, VAT/TAX ID) and DIDWW answers within 48
@@ -59,7 +60,9 @@ created by the user in the DIDWW panel.
      addresses (each pairing skill lists them). Where the platform
      publishes none, do not invent a range and do not suggest
      `0.0.0.0/0` (DIDWW advises against open ranges); send the user to
-     DIDWW support (support@didww.com) for that case.
+     DIDWW support (support@didww.com) for that case. DIDWW's Vogent
+     guide allows `0.0.0.0/0` only for temporary testing, at the user's
+     own risk; `didww-to-vogent` covers it.
    - Termination: 24 Hour Limit (USD) at its minimum, 50 (the default is
      3000; the trunk is disabled when the limit is reached), Capacity
      limit = expected concurrent calls, usage limit notification on.
@@ -85,7 +88,10 @@ ElevenLabs `sip.rtc.elevenlabs.io:5060` (TCP/TLS, digest). Vapi
 DIDWW's seven signaling IPs as gateways; `max_transfers` 1 for
 transfers). Retell `sip.retellai.com` (TCP). Ultravox: the
 account's own SIP domain, read from `GET /api/sip`, address-based
-routing. Vogent `sip.vogent.ai`. OpenAI
+routing. Vogent `sip.vogent.ai` (UDP 5060, R-URI `{DID}` or `+{DID}`;
+inbound trunk Authorization = the outbound trunk's pair; the outbound
+trunk is needed even inbound-only; transfers only as Warm Transfer;
+DIDWW's guide `doc.didww.com/integrations/vogent/`). OpenAI
 `sip:{project_id}@sip.api.openai.com;transport=tls` (TLS+SRTP
 mandatory, webhook backend is the gate). xAI
 `sip:{number}@sip.voice.x.ai;transport=tls` (digest via number
@@ -102,9 +108,13 @@ Retell `18.98.16.120/30`, `3.42.144.0/23`, `153.57.128.0/18` (plus
 `143.223.88.0/21`, `161.115.160.0/19` for some US traffic). LiveKit
 Cloud (Canada, EU, India, Japan, US) `143.223.88.0/21`,
 `161.115.160.0/19`, `153.57.128.0/18`; self-hosted: its public IP.
-ElevenLabs, Ultravox, Vogent: no published range outside enterprise
-plans (ElevenLabs Enterprise static SIP is a /24 from their support);
-ask DIDWW support. OpenAI and xAI: no outbound trunk needed.
+ElevenLabs, Ultravox: no published range outside enterprise plans
+(ElevenLabs Enterprise static SIP is a /24 from their support); ask
+DIDWW support. Vogent: its enterprise ranges plus DIDWW's seven
+inbound signaling IPs (DIDWW's Vogent guide); without enterprise
+ranges ask DIDWW support. Its warm transfers dial from its own servers;
+`0.0.0.0/0` only for temporary testing, never `0.0.0.0/32` (matches
+nothing). OpenAI and xAI: no outbound trunk needed.
 
 ## Panels, keys and money
 
@@ -142,4 +152,4 @@ the companion.
 Built around [DIDWW](https://www.didww.com/?ref=didww-connect), a
 licensed global operator providing the numbers and two-way SIP trunking
 under all of the above; platform details verified August 2026, DIDWW
-outbound trunk rules October 2026.
+outbound trunk rules and Vogent transfers October 2026.

@@ -79,7 +79,10 @@ keys where a column says so.
 
 ## Vogent
 
-- Panel `app.vogent.ai`. Keys: API Keys page in the sidebar. No MCP.
+- Panel `app.vogent.ai`. Keys: API tab in the sidebar, Keys, New Key;
+  copy the secret (the UUID in the key list is the key's ID and gets
+  "unauthorized"). No MCP. Dial History shows each call's transcript;
+  `GET /api/dials/{id}` returns it, but the API cannot list dials.
 - Money: per-minute, around 0.09 USD/min per their marketing, but there
   is NO public pricing page; verify actual rates inside the panel before
   the user scales anything.
