@@ -38,10 +38,10 @@
     {
       "name": "didww-to-openai-realtime",
       "type": "archive",
-      "description": "Point a DIDWW phone number directly at OpenAI's Realtime API over SIP, with a generated webhook backend for call control. Use whenever the user wants gpt-realtime answering a real phone number via DIDWW, mentions sip.api.openai.com, realtime.call.incoming webhooks, Realtime SIP, or debugging calls between DIDWW and OpenAI. This is the developer-grade pairing: the agent behavior is code the user owns.",
+      "description": "Connect DIDWW phone numbers directly to OpenAI over SIP, in two separate setups the user chooses between: incoming calls answered by gpt-realtime (Realtime API, webhook backend, optional transfer to a live person), and outbound calls placed by GPT-Live (Live API) through a DIDWW outbound trunk with its username and password. Use whenever the user wants an OpenAI voice agent on a DIDWW number, mentions sip.api.openai.com, realtime.call.incoming webhooks, Realtime SIP, GPT-Live, gpt-live-1, /v1/live/sessions, outbound AI calls from OpenAI, or debugging calls between DIDWW and OpenAI. Developer-grade: the agent is code the user runs.",
       "url": "didww-to-openai-realtime.tar.gz",
-      "digest": "sha256:78f33de78d5aa29d849480e4df51c43802d738350a1d0403be725c808a190c25",
-      "version": "1.1.0",
+      "digest": "sha256:6978dd8f558859a8d47a04d8e60b65c3d89a8f7d8de7d94093b925b35501d54a",
+      "version": "1.2.0",
       "documentation": "https://github.com/didww/ai/blob/main/docs/didww-to-openai-realtime.md",
       "install": "npx didww-to-openai-realtime"
     },
