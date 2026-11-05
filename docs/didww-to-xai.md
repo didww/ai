@@ -111,7 +111,7 @@ The skill carries this failure map and works through it when a test call fails.
 
 ## Additional resources
 
-- [DIDWW to OpenAI Realtime](didww-to-openai-realtime.md): the sibling pairing and the template for the backend.
+- [DIDWW to OpenAI (Realtime and GPT-Live)](didww-to-openai-realtime.md): the sibling pairing and the template for the backend.
 - [Inbound trunks](https://doc.didww.com/voice/inbound-trunks/index.html) and [Outbound trunks](https://doc.didww.com/voice/outbound-trunks/index.html) in the DIDWW documentation.
 - [DIDWW MCP](https://doc.didww.com/mcp/index.html): the connector the skill uses for the carrier side.
 - Skill source and tests: [`skills/didww-to-xai`](https://github.com/didww/ai/tree/main/skills/didww-to-xai) in the didww/ai repository. Package: [npmjs.com/package/didww-to-xai](https://www.npmjs.com/package/didww-to-xai).

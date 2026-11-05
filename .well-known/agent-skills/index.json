@@ -8,9 +8,9 @@
     {
       "name": "didww-connect",
       "type": "archive",
-      "description": "Connect a DIDWW phone number to ANY AI voice platform: helps choose the platform, then wires the SIP trunk pair and number. Use whenever the user wants a voice AI agent on a DIDWW number and has not committed to a platform, asks which AI platform to use with DIDWW, or names a platform that has no dedicated didww-to-X skill installed. Covers ElevenLabs, Vapi, Retell, Ultravox, Vogent, OpenAI Realtime, xAI, LiveKit and the enterprise-gated platforms.",
+      "description": "Connect a DIDWW phone number to ANY AI voice platform: helps choose the platform, then wires the SIP trunk pair and number. Use whenever the user wants a voice AI agent on a DIDWW number and has not committed to a platform, asks which AI platform to use with DIDWW, or names a platform that has no dedicated didww-to-X skill installed. Covers ElevenLabs, Vapi, Retell, Ultravox, Vogent, OpenAI (Realtime and GPT-Live), xAI, LiveKit and the enterprise-gated platforms.",
       "url": "didww-connect.tar.gz",
-      "digest": "sha256:c192d69b8e55d697ac6081cebe9a0338446c4d2862b95ef25c5b7e58b899c949",
+      "digest": "sha256:14f7d9765d5ffcbad646296494c98760db250fc98cdb9d562330723a814b3ca4",
       "version": "1.0.4",
       "documentation": "https://github.com/didww/ai/blob/main/docs/didww-connect.md",
       "install": "npx didww-connect"

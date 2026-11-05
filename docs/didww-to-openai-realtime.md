@@ -1,4 +1,4 @@
-# DIDWW to OpenAI Realtime skill
+# DIDWW to OpenAI skill (Realtime and GPT-Live)
 
 Use the **didww-to-openai-realtime** skill with **Claude Code** to connect DIDWW phone numbers directly to OpenAI over SIP, with no voice platform in between. It covers two separate setups and asks which one you want first:
 

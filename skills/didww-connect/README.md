@@ -34,7 +34,7 @@ Every installer copies files and nothing else; an existing install is moved to
 | [didww-to-retell](https://github.com/didww/ai/tree/main/skills/didww-to-retell) | Retell | `npx didww-to-retell` |
 | [didww-to-ultravox](https://github.com/didww/ai/tree/main/skills/didww-to-ultravox) | Ultravox | `npx didww-to-ultravox` |
 | [didww-to-vogent](https://github.com/didww/ai/tree/main/skills/didww-to-vogent) | Vogent | `npx didww-to-vogent` |
-| [didww-to-openai-realtime](https://github.com/didww/ai/tree/main/skills/didww-to-openai-realtime) | OpenAI Realtime | `npx didww-to-openai-realtime` |
+| [didww-to-openai-realtime](https://github.com/didww/ai/tree/main/skills/didww-to-openai-realtime) | OpenAI (Realtime and GPT-Live) | `npx didww-to-openai-realtime` |
 | [didww-to-xai](https://github.com/didww/ai/tree/main/skills/didww-to-xai) | xAI Grok | `npx didww-to-xai` |
 | [didww-to-livekit](https://github.com/didww/ai/tree/main/skills/didww-to-livekit) | LiveKit | `npx didww-to-livekit` |
 

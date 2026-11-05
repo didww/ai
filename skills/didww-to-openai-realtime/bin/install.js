@@ -147,6 +147,6 @@ if (!dryRun) {
 say(dryRun ? `
   Dry run. Nothing was written.
 ` : `
-  Done. Restart Claude Code. It triggers on its own when you mention DIDWW together with OpenAI Realtime.
+  Done. Restart Claude Code. It triggers on its own when you mention DIDWW together with OpenAI Realtime or GPT-Live.
   The carrier side wants the DIDWW MCP (https://api.didww.com/mcp, OAuth sign-in).
 `);

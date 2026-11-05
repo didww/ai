@@ -2,7 +2,7 @@
 
 Use the **didww-connect** skill with **Claude Code** to put an AI voice agent on a DIDWW phone number when you have not yet chosen a voice platform. The skill compares the supported platforms against what matters to you, performs the DIDWW-side wiring that is identical for every platform, and hands over to the dedicated `didww-to-<platform>` skill once a platform is chosen.
 
-- Choose between ElevenLabs, Vapi, Retell, Ultravox, Vogent, OpenAI Realtime, xAI Grok and LiveKit in one question.
+- Choose between ElevenLabs, Vapi, Retell, Ultravox, Vogent, OpenAI (Realtime and GPT-Live), xAI Grok and LiveKit in one question.
 - Configure the DIDWW number, the inbound SIP trunk and digest authentication through the DIDWW MCP, and guide you through the outbound trunk and its spend limits in the DIDWW User Panel.
 - Monitor the finished connection with a read-only health check that runs from cron.
 
@@ -94,7 +94,7 @@ The number and the inbound trunk are configured through the DIDWW MCP under your
 | Retell | `sip.retellai.com` | TCP |
 | Ultravox | The account's own SIP domain from `GET /api/sip` | Address-based routing to `agent_<id>@<domain>` |
 | Vogent | `sip.vogent.ai`, port 5060, UDP | User Part of R-URI `{DID}` or `+{DID}`; Authorization with the outbound trunk's credentials; transfers only as Warm Transfer |
-| OpenAI Realtime | `sip:{project_id}@sip.api.openai.com;transport=tls` | TLS and SRTP mandatory; EU host `sip-eu.api.openai.com`; the called number arrives in the Diversion header. Transfers are SIP REFER to `sip:+{number}@{DIDWW outbound host}` (not `tel:`) through the outbound trunk. GPT-Live outbound calls also use the outbound trunk, with SRTP SDES and OpenAI's ranges `13.79.45.80/28`, `23.98.140.64/28`, `40.67.149.176/28`, `40.83.204.240/28` in Allowed SIP IP addresses. See [DIDWW's OpenAI guide](https://doc.didww.com/integrations/openai/index.html) |
+| OpenAI (Realtime and GPT-Live) | `sip:{project_id}@sip.api.openai.com;transport=tls` | TLS and SRTP mandatory; EU host `sip-eu.api.openai.com`; the called number arrives in the Diversion header. Transfers are SIP REFER to `sip:+{number}@{DIDWW outbound host}` (not `tel:`) through the outbound trunk. GPT-Live outbound calls also use the outbound trunk, with SRTP SDES and OpenAI's ranges `13.79.45.80/28`, `23.98.140.64/28`, `40.67.149.176/28`, `40.83.204.240/28` in Allowed SIP IP addresses. See [DIDWW's OpenAI guide](https://doc.didww.com/integrations/openai/index.html) |
 | xAI Grok | `sip:{number}@sip.voice.x.ai;transport=tls` | Digest auth set when the number is registered with xAI |
 | LiveKit | `sip:{sip_subdomain}.sip.livekit.cloud` (copy the SIP URI from Project settings) | 5060 TCP/UDP or 5061 TLS; region-pinned `{sip_subdomain}.{eu|us|uk|india|japan|aus|canada|sa}.sip.livekit.cloud`; numbers carry the `+` |
 
@@ -127,7 +127,7 @@ It checks the balance against the threshold, lists DIDs and warns about blocked 
 
 ## Additional resources
 
-- Dedicated pairing skills: [ElevenLabs](didww-to-elevenlabs.md), [Vapi](didww-to-vapi.md), [Retell](didww-to-retell.md), [Ultravox](didww-to-ultravox.md), [Vogent](didww-to-vogent.md), [OpenAI Realtime](didww-to-openai-realtime.md), [xAI Grok](didww-to-xai.md), [LiveKit](didww-to-livekit.md).
+- Dedicated pairing skills: [ElevenLabs](didww-to-elevenlabs.md), [Vapi](didww-to-vapi.md), [Retell](didww-to-retell.md), [Ultravox](didww-to-ultravox.md), [Vogent](didww-to-vogent.md), [OpenAI (Realtime and GPT-Live)](didww-to-openai-realtime.md), [xAI Grok](didww-to-xai.md), [LiveKit](didww-to-livekit.md).
 - [Inbound trunks](https://doc.didww.com/voice/inbound-trunks/index.html) and [Outbound trunks](https://doc.didww.com/voice/outbound-trunks/index.html) in the DIDWW documentation.
 - [DIDWW MCP](https://doc.didww.com/mcp/index.html): the connector the skill uses for the carrier side.
 - Skill source and tests: [`skills/didww-connect`](https://github.com/didww/ai/tree/main/skills/didww-connect) in the didww/ai repository. Package: [npmjs.com/package/didww-connect](https://www.npmjs.com/package/didww-connect).

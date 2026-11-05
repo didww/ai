@@ -26,6 +26,7 @@ If an earlier copy of these pages was already handed over, every page changed. R
 - **Allowed SIP IP addresses.** Each page gives the platform's source addresses for the outbound trunk, or says to contact DIDWW support where the platform publishes none.
 - **Hosts.** The full list of outbound hosts: `nyc.us`, `lac.us`, `mia.us`, `fra.eu`, `ams.eu`, `sg` and `hk` `.out.didww.com`.
 - **LiveKit page.** Trunks are encrypted by default (TLS on port 5061 plus SRTP SDES). The SIP URI is copied from the project settings rather than derived. `--outbound-only` is new, and the failure map is rewritten from tested calls.
-- **OpenAI Realtime and xAI pages.** These pages handle inbound calls only, so they no longer ask for a 24-hour limit, just a capacity limit on the inbound trunk.
+- **xAI page.** It handles inbound calls only, so it asks for no 24-hour limit, just a capacity limit on the inbound trunk.
+- **OpenAI page.** Renamed in its title to "DIDWW to OpenAI skill (Realtime and GPT-Live)"; the file name stays `didww-to-openai-realtime.md`. It now follows DIDWW's [OpenAI integration guide](https://doc.didww.com/integrations/openai/index.html): incoming calls, transfers to a live person and GPT-Live outbound calls, so it asks for an outbound trunk (SRTP SDES, DIDWW's seven IPs for transfers, OpenAI's four ranges for GPT-Live) and a 24-hour limit.
 
 The content is generated from the skills in `../skills/<name>/SKILL.md` and the scripts' usage text. When a skill changes, update its page here in the same commit.

@@ -6,7 +6,8 @@ description: >
   user wants a voice AI agent on a DIDWW number and has not committed to
   a platform, asks which AI platform to use with DIDWW, or names a
   platform that has no dedicated didww-to-X skill installed. Covers
-  ElevenLabs, Vapi, Retell, Ultravox, Vogent, OpenAI Realtime, xAI,
+  ElevenLabs, Vapi, Retell, Ultravox, Vogent, OpenAI (Realtime and
+  GPT-Live), xAI,
   LiveKit and the enterprise-gated platforms.
 ---
 
