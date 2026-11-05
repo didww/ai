@@ -13,7 +13,7 @@ DIDWW publishes a family of **agent skills** for **Claude Code** that put an AI 
 | [didww-to-vapi](didww-to-vapi.md) | Vapi | `npx didww-to-vapi` | REST script; inbound + outbound credentials, number, transfers |
 | [didww-to-retell](didww-to-retell.md) | Retell AI | `npx didww-to-retell` | Fully MCP-driven when Retell's MCP is connected |
 | [didww-to-ultravox](didww-to-ultravox.md) | Ultravox | `npx didww-to-ultravox` | Address-based routing; no number import |
-| [didww-to-vogent](didww-to-vogent.md) | Vogent | `npx didww-to-vogent` | REST import plus one dashboard click |
+| [didww-to-vogent](didww-to-vogent.md) | Vogent | `npx didww-to-vogent` | REST import and agent linking; one dashboard setting for warm transfers |
 | [didww-to-openai-realtime](didww-to-openai-realtime.md) | OpenAI Realtime | `npx didww-to-openai-realtime` | Direct SIP; you run a webhook backend |
 | [didww-to-xai](didww-to-xai.md) | xAI Grok | `npx didww-to-xai` | Direct SIP with number registration; you run a backend |
 | [didww-to-livekit](didww-to-livekit.md) | LiveKit | `npx didww-to-livekit` | Trunk and dispatch rule; you run the worker |
