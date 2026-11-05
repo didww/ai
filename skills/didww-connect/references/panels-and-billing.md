@@ -89,16 +89,23 @@ keys where a column says so.
   is NO public pricing page; verify actual rates inside the panel before
   the user scales anything.
 
-## OpenAI (Realtime SIP)
+## OpenAI (Realtime SIP, GPT-Live)
 
 - Panel `platform.openai.com`. Keys: `/api-keys`. Webhooks:
-  `/settings/project/webhooks` (create, copy the signing secret).
+  `/settings/project/webhooks` (create, copy the signing secret);
+  creating one needs the Webhooks write permission
+  (`api.webhooks.write`) from the project owner.
+- A Restricted key with only Realtime (`/v1/realtime`) set to Request
+  was enough for incoming calls, transfers and GPT-Live outbound calls.
+  GPT-Live outbound (`gpt-live-1`) also needs outbound SIP enabled for
+  the organization; otherwise `403 outbound_sip_not_enabled`.
 - Money: PREPAID credits, Settings then Billing, minimum purchase 5 USD.
   Auto-recharge defaults to ON during setup; credits EXPIRE after one
   year, non-refundable. Realtime bills in audio tokens, not minutes
   (about 600 tokens/min heard, 1,200/min spoken); a typical phone
   conversation lands around 0.05 to 0.10 USD/min of model cost depending
-  on talk ratio.
+  on talk ratio. DIDWW bills outbound calls and every transfer leg per
+  minute at the outbound rate on top of that.
 - Gotcha: the expiry and default auto-recharge surprise people; say both
   out loud during setup.
 

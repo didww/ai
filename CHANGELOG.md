@@ -2,6 +2,14 @@
 
 All notable changes to the skills in this repository. Each skill is versioned independently in its `package.json`.
 
+## didww-connect 1.0.4 (2026-11-05)
+
+Aligned with DIDWW's [OpenAI integration guide](https://doc.didww.com/integrations/openai/index.html) and verified on real calls: an incoming Realtime call transferred to a live person, and GPT-Live outbound calls through a DIDWW outbound trunk.
+
+- **OpenAI needs an outbound trunk for transfers and outbound calls.** The hub said "OpenAI and xAI: no outbound trunk needed". DIDWW places every transfer of an incoming Realtime call through the outbound trunk (DIDWW's seven inbound signaling IPs, SRTP SDES, the trunk's username and password on the inbound trunk's Authorization, `max_transfers` 1, a `sip:` target; `tel:` fails with 603), and GPT-Live dials the outbound trunk directly with its digest credentials. Without OpenAI's four SIP ranges in Allowed SIP IPs the call fails with 403 Forbidden before any CDR; without SRTP SDES with 500 No suitable media. xAI is unchanged.
+- The OpenAI row and ingress notes: OpenAI also places outbound calls with GPT-Live, and the called DID arrives in `Diversion` (the `To` header holds the project ID).
+- `references/panels-and-billing.md`: the webhook permission, the restricted key that worked, outbound SIP enablement for GPT-Live (`outbound_sip_not_enabled`), and DIDWW outbound billing for calls and transfer legs.
+
 ## didww-to-elevenlabs 1.1.1, didww-connect 1.0.3 (2026-11-03)
 
 Found while setting up a DIDWW number on an ElevenLabs agent with the skill; every fix was confirmed by real inbound calls and a real live-agent transfer.
