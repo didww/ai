@@ -2,6 +2,16 @@
 
 All notable changes to the skills in this repository. Each skill is versioned independently in its `package.json`.
 
+## didww-to-ultravox 1.1.1, didww-connect 1.0.5 (2026-11-10)
+
+Found while connecting a DIDWW number to an Ultravox agent with the skill, and verified on real calls: an incoming call, a SIP REFER transfer to a live number, and an outgoing call through a DIDWW outbound trunk. The skill now links DIDWW's [Ultravox integration guide](https://doc.didww.com/integrations/ultravox/index.html) and follows it.
+
+- **Transfers.** The skill had no transfer steps, and the first transfer failed with `10020 error - Unauthorized`. New step: the built-in `coldTransfer` tool with a `sip:+{number}@{DIDWW outbound host}` target and `sipVerb` REFER, `max_transfers` 1 on the inbound trunk, and the outbound trunk's username and password on the inbound trunk's Authorization. With those, the transfer succeeded and the destination rang.
+- **Outbound trunk Allowed SIP IPs.** The skill said Ultravox publishes no source addresses. Ultravox's SIP runs on Voximplant, which publishes its SIP servers; the skill now lists the US and EU ones from the guide, plus DIDWW's seven inbound signaling IPs for transfers. The test call came from one of the listed Voximplant addresses.
+- **Media encryption Disabled.** The skill said to match the platform side. Ultravox offers unencrypted media only: with SRTP SDES on the outbound trunk, the outgoing call ended before ringing with 500 No suitable media.
+- Smaller corrections: inbound codecs PCMU, PCMA and telephone-event (Ultravox does not take G.729 or G.723); routing by number pattern with DIDWW's default `{DID}` user part (the fallback webhook is for more than 20 agents); outgoing calls with `POST /api/agents/{agent_id}/calls`, where `to` must be a SIP URI; the SIP logs endpoint for diagnosis; new failure-map rows. `connect.py` prints the agent calls endpoint.
+- `didww-connect`: Ultravox's ingress notes and outbound Allowed SIP IPs (it said "no published range").
+
 ## didww-to-openai-realtime 1.2.0, didww-connect 1.0.4 (2026-11-05)
 
 Aligned with DIDWW's [OpenAI integration guide](https://doc.didww.com/integrations/openai/index.html) and verified on real calls: incoming Realtime calls, a transfer to a live person, and GPT-Live outbound calls through a DIDWW outbound trunk. The skill's new section 7 lists every live test result.

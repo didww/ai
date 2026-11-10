@@ -91,8 +91,13 @@ inbound trunk and the number use the outbound trunk's pair and
 `sip.vapi.ai` (EU org `sip.eu.vapi.ai`; Vapi's inbound credential lists
 DIDWW's seven signaling IPs as gateways; `max_transfers` 1 for
 transfers). Retell `sip.retellai.com` (TCP). Ultravox: the
-account's own SIP domain, read from `GET /api/sip`, address-based
-routing. Vogent `sip.vogent.ai` (UDP 5060, R-URI `{DID}` or `+{DID}`;
+account's own SIP domain, read from `GET /api/sip` (UDP 5060, R-URI
+`{DID}` routed by an `allowedAgents` `toUserPattern`, codecs PCMU,
+PCMA and telephone-event; transfers by SIP REFER with the `coldTransfer`
+tool to `sip:+{number}@{DIDWW outbound host}`, `max_transfers` 1 and
+the outbound trunk's pair on the inbound trunk, else
+`10020 error - Unauthorized`; DIDWW's guide
+`doc.didww.com/integrations/ultravox/`). Vogent `sip.vogent.ai` (UDP 5060, R-URI `{DID}` or `+{DID}`;
 inbound trunk Authorization = the outbound trunk's pair; the outbound
 trunk is needed even inbound-only; transfers only as Warm Transfer;
 DIDWW's guide `doc.didww.com/integrations/vogent/`). OpenAI
@@ -118,9 +123,14 @@ Retell `18.98.16.120/30`, `3.42.144.0/23`, `153.57.128.0/18` (plus
 `143.223.88.0/21`, `161.115.160.0/19` for some US traffic). LiveKit
 Cloud (Canada, EU, India, Japan, US) `143.223.88.0/21`,
 `161.115.160.0/19`, `153.57.128.0/18`; self-hosted: its public IP.
-ElevenLabs, Ultravox: no published range outside enterprise plans
-(ElevenLabs Enterprise static SIP is a /24 from their support); ask
-DIDWW support. ElevenLabs transfers need DIDWW's seven inbound
+ElevenLabs: no published range outside enterprise plans
+(Enterprise static SIP is a /24 from their support); ask
+DIDWW support. Ultravox (its SIP runs on Voximplant): Voximplant's
+published US and EU SIP servers `69.167.178.6`, `69.167.178.14`,
+`3.147.160.14`, `78.13.219.90`, `3.123.246.217`, `143.244.45.166`
+(current list at `api.voximplant.com/getMediaResources?with_sbcs`),
+plus DIDWW's seven inbound signaling IPs for transfers; media
+encryption Disabled (SRTP SDES gives 500 No suitable media). ElevenLabs transfers need DIDWW's seven inbound
 signaling IPs there as well. Vogent: its enterprise ranges plus DIDWW's
 seven inbound signaling IPs (DIDWW's Vogent guide); without enterprise
 ranges ask DIDWW support. Its warm transfers dial from its own servers;
