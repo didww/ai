@@ -13,9 +13,9 @@ DIDWW publishes a family of **agent skills** for **Claude Code** that put an AI 
 | [didww-to-vapi](didww-to-vapi.md) | Vapi | `npx didww-to-vapi` | REST script; inbound + outbound credentials, number, transfers |
 | [didww-to-retell](didww-to-retell.md) | Retell AI | `npx didww-to-retell` | Fully MCP-driven when Retell's MCP is connected |
 | [didww-to-ultravox](didww-to-ultravox.md) | Ultravox | `npx didww-to-ultravox` | Address-based routing; no number import |
-| [didww-to-vogent](didww-to-vogent.md) | Vogent | `npx didww-to-vogent` | REST import plus one dashboard click |
-| [didww-to-openai-realtime](didww-to-openai-realtime.md) | OpenAI Realtime | `npx didww-to-openai-realtime` | Direct SIP; you run a webhook backend |
-| [didww-to-xai](didww-to-xai.md) | xAI Grok | `npx didww-to-xai` | Direct SIP with number registration; you run a backend |
+| [didww-to-vogent](didww-to-vogent.md) | Vogent | `npx didww-to-vogent` | REST import and agent linking; one dashboard setting for warm transfers |
+| [didww-to-openai-realtime](didww-to-openai-realtime.md) | OpenAI (Realtime and GPT-Live) | `npx didww-to-openai-realtime` | Direct SIP; incoming calls with your webhook backend, outbound calls with GPT-Live |
+| [didww-to-xai](didww-to-xai.md) | xAI Grok | `npx didww-to-xai` | Console voice agent with a Direct SIP number, or your own backend; incoming calls and transfers |
 | [didww-to-livekit](didww-to-livekit.md) | LiveKit | `npx didww-to-livekit` | Trunk and dispatch rule; you run the worker |
 
 ## Before you begin
@@ -66,7 +66,8 @@ The carrier-side wiring is identical for every platform and always runs through 
 | Maximum MCP automation | [didww-to-retell](didww-to-retell.md) |
 | Richest call transfers, own speech model | [didww-to-ultravox](didww-to-ultravox.md) |
 | Small and simple | [didww-to-vogent](didww-to-vogent.md) |
-| You own the agent code, minimal stack | [didww-to-openai-realtime](didww-to-openai-realtime.md) or [didww-to-xai](didww-to-xai.md) |
+| You own the agent code, minimal stack | [didww-to-openai-realtime](didww-to-openai-realtime.md) |
+| Grok voice, incoming calls and transfers only | [didww-to-xai](didww-to-xai.md) |
 | Any STT, LLM and TTS combination, including Claude as the model | [didww-to-livekit](didww-to-livekit.md) |
 | Not sure yet | [didww-connect](didww-connect.md) |
 

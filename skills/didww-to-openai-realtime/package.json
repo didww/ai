@@ -1,7 +1,7 @@
 {
   "name": "didww-to-openai-realtime",
-  "version": "1.1.0",
-  "description": "Point a DIDWW phone number directly at OpenAI's Realtime API over SIP, with a generated webhook backend for call control.",
+  "version": "1.2.0",
+  "description": "Connect DIDWW numbers directly to OpenAI over SIP: incoming calls with the Realtime API (webhook backend, live-agent transfers) and outbound calls with GPT-Live through a DIDWW outbound trunk.",
   "bin": {
     "didww-to-openai-realtime": "bin/install.js"
   },
@@ -25,7 +25,8 @@
     "sip",
     "voice-ai",
     "telephony",
-    "openai"
+    "openai",
+    "gpt-live"
   ],
   "repository": {
     "type": "git",

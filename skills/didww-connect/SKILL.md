@@ -6,7 +6,8 @@ description: >
   user wants a voice AI agent on a DIDWW number and has not committed to
   a platform, asks which AI platform to use with DIDWW, or names a
   platform that has no dedicated didww-to-X skill installed. Covers
-  ElevenLabs, Vapi, Retell, Ultravox, Vogent, OpenAI Realtime, xAI,
+  ElevenLabs, Vapi, Retell, Ultravox, Vogent, OpenAI (Realtime and
+  GPT-Live), xAI,
   LiveKit and the enterprise-gated platforms.
 ---
 
@@ -28,8 +29,9 @@ Ask what matters most and map:
 | API-first, EU region, BYO model keys | Vapi | REST scripts (their MCP is read-only for numbers) |
 | Max MCP automation, one-call setup | Retell | Their MCP imports numbers and creates agents |
 | Richest transfers, own speech model | Ultravox | REST; address-based routing, no number import |
-| Small and simple | Vogent | REST import; agent binding is one dashboard click |
-| Developer owns the brain, minimal stack | OpenAI Realtime or xAI | Webhook backend required, not no-code |
+| Small and simple | Vogent | REST import and agent linking; warm transfer type is one dashboard setting |
+| Developer owns the brain, minimal stack | OpenAI (Realtime incoming, GPT-Live outbound) | Own backend required (a webhook for incoming calls), not no-code |
+| Grok voice, incoming calls and transfers only | xAI | Console voice agent, number added as Direct SIP (console or one REST call); no outbound calls |
 | Any STT/LLM/TTS combination (Claude as the brain), open source | LiveKit | REST script creates trunk + dispatch rule; the worker is code |
 | Enterprise procurement in play | Bland, Synthflow, Regal | Sales-gated; never promise same-day |
 | Data control, own servers | LiveKit self-hosted | didww-to-livekit for the wiring; voice-agent-telephony for the agent |
@@ -47,7 +49,8 @@ created by the user in the DIDWW panel.
    preferred, media encryption matched to the platform's setting,
    `capacity_limit` = the concurrent calls the user expects. Attach the
    DID.
-3. Outbound trunk (panel, only if the agent places calls):
+3. Outbound trunk (panel, only if the agent places calls or transfers;
+   Vogent always, its number import needs the trunk's credentials):
    - Access first: under Voice, Outbound Trunks a Get Access button means
      the account is not approved yet. The application needs a business
      account (company name, VAT/TAX ID) and DIDWW answers within 48
@@ -59,7 +62,9 @@ created by the user in the DIDWW panel.
      addresses (each pairing skill lists them). Where the platform
      publishes none, do not invent a range and do not suggest
      `0.0.0.0/0` (DIDWW advises against open ranges); send the user to
-     DIDWW support (support@didww.com) for that case.
+     DIDWW support (support@didww.com) for that case. DIDWW's Vogent
+     guide allows `0.0.0.0/0` only for temporary testing, at the user's
+     own risk; `didww-to-vogent` covers it.
    - Termination: 24 Hour Limit (USD) at its minimum, 50 (the default is
      3000; the trunk is disabled when the limit is reached), Capacity
      limit = expected concurrent calls, usage limit notification on.
@@ -80,16 +85,38 @@ created by the user in the DIDWW panel.
 
 ## Platform ingress cheat sheet
 
-ElevenLabs `sip.rtc.elevenlabs.io:5060` (TCP/TLS, digest). Vapi
+ElevenLabs `sip.rtc.elevenlabs.io:5060` (TCP/TLS, digest; the number
+imported without the `+`, as DIDWW sends `{DID}`; for transfers the
+inbound trunk and the number use the outbound trunk's pair and
+`max_transfers` 1). Vapi
 `sip.vapi.ai` (EU org `sip.eu.vapi.ai`; Vapi's inbound credential lists
 DIDWW's seven signaling IPs as gateways; `max_transfers` 1 for
 transfers). Retell `sip.retellai.com` (TCP). Ultravox: the
-account's own SIP domain, read from `GET /api/sip`, address-based
-routing. Vogent `sip.vogent.ai`. OpenAI
+account's own SIP domain, read from `GET /api/sip` (UDP 5060, R-URI
+`{DID}` routed by an `allowedAgents` `toUserPattern`, codecs PCMU,
+PCMA and telephone-event; transfers by SIP REFER with the `coldTransfer`
+tool to `sip:+{number}@{DIDWW outbound host}`, `max_transfers` 1 and
+the outbound trunk's pair on the inbound trunk, else
+`10020 error - Unauthorized`; DIDWW's guide
+`doc.didww.com/integrations/ultravox/`). Vogent `sip.vogent.ai` (UDP 5060, R-URI `{DID}` or `+{DID}`;
+inbound trunk Authorization = the outbound trunk's pair; the outbound
+trunk is needed even inbound-only; transfers only as Warm Transfer;
+DIDWW's guide `doc.didww.com/integrations/vogent/`). OpenAI
 `sip:{project_id}@sip.api.openai.com;transport=tls` (TLS+SRTP
-mandatory, webhook backend is the gate). xAI
-`sip:{number}@sip.voice.x.ai;transport=tls` (digest via number
-registration). LiveKit `sip:{sip_subdomain}.sip.livekit.cloud` (the SIP URI
+mandatory, webhook backend is the gate; the called DID arrives in
+`Diversion`, `To` holds the project ID; transfers by SIP REFER to
+`sip:+{number}@{DIDWW outbound host}`, never `tel:`, with
+`max_transfers` 1 and the outbound trunk's pair on the inbound trunk;
+GPT-Live outbound calls dial `sips:{DIDWW outbound host}:5061` with the
+outbound trunk's pair; DIDWW's guide
+`doc.didww.com/integrations/openai/`). xAI
+`sip.voice.x.ai`, port 5061, TLS, R-URI `+{DID}`, IPv4, G.711, SRTP
+off (the number is added to a console voice agent as Direct SIP, auth
+by digest = the inbound trunk's Authorization pair or by DIDWW's seven
+signaling IPs; transfers by SIP REFER to
+`sip:+{number}@{DIDWW outbound host}` with `max_transfers` 1 and the
+outbound trunk's pair on the inbound trunk; no outbound calls; DIDWW's
+guide `doc.didww.com/integrations/xai/`). LiveKit `sip:{sip_subdomain}.sip.livekit.cloud` (the SIP URI
 from Project settings, not derived from the project URL; 5060
 TCP/UDP, 5061 TLS, digest; region-pinned
 `{sip_subdomain}.{eu|us|uk|india|japan|aus|canada|sa}.sip.livekit.cloud`;
@@ -102,9 +129,26 @@ Retell `18.98.16.120/30`, `3.42.144.0/23`, `153.57.128.0/18` (plus
 `143.223.88.0/21`, `161.115.160.0/19` for some US traffic). LiveKit
 Cloud (Canada, EU, India, Japan, US) `143.223.88.0/21`,
 `161.115.160.0/19`, `153.57.128.0/18`; self-hosted: its public IP.
-ElevenLabs, Ultravox, Vogent: no published range outside enterprise
-plans (ElevenLabs Enterprise static SIP is a /24 from their support);
-ask DIDWW support. OpenAI and xAI: no outbound trunk needed.
+ElevenLabs: no published range outside enterprise plans
+(Enterprise static SIP is a /24 from their support); ask
+DIDWW support. Ultravox (its SIP runs on Voximplant): Voximplant's
+published US and EU SIP servers `69.167.178.6`, `69.167.178.14`,
+`3.147.160.14`, `78.13.219.90`, `3.123.246.217`, `143.244.45.166`
+(current list at `api.voximplant.com/getMediaResources?with_sbcs`),
+plus DIDWW's seven inbound signaling IPs for transfers; media
+encryption Disabled (SRTP SDES gives 500 No suitable media). ElevenLabs transfers need DIDWW's seven inbound
+signaling IPs there as well. Vogent: its enterprise ranges plus DIDWW's
+seven inbound signaling IPs (DIDWW's Vogent guide); without enterprise
+ranges ask DIDWW support. Its warm transfers dial from its own servers;
+`0.0.0.0/0` only for temporary testing, never `0.0.0.0/32` (matches
+nothing). OpenAI: transfers need DIDWW's seven inbound signaling IPs;
+GPT-Live outbound calls also need OpenAI's `13.79.45.80/28`,
+`23.98.140.64/28`, `40.67.149.176/28`, `40.83.204.240/28` (published as
+SRTP media ranges; without them 403 Forbidden), and both need media
+encryption SRTP SDES on the trunk (else 500 No suitable media). xAI:
+places no calls, so the outbound trunk is only for transfers: DIDWW's
+seven inbound signaling IPs, media encryption Disabled, and the
+destinations transfers go to (a disallowed one is "declined").
 
 ## Panels, keys and money
 
@@ -142,4 +186,6 @@ the companion.
 Built around [DIDWW](https://www.didww.com/?ref=didww-connect), a
 licensed global operator providing the numbers and two-way SIP trunking
 under all of the above; platform details verified August 2026, DIDWW
-outbound trunk rules October 2026.
+outbound trunk rules, ElevenLabs MCP host and transfer notes, and Vogent
+transfers October 2026; OpenAI transfers and GPT-Live outbound November
+2026.

@@ -1,7 +1,7 @@
 {
   "name": "didww-to-xai",
-  "version": "1.0.2",
-  "description": "Point a DIDWW phone number at xAI's Grok voice over SIP.",
+  "version": "1.1.0",
+  "description": "Connect a DIDWW phone number to an xAI Grok Voice agent over SIP: console agent or your own backend, incoming calls and transfers.",
   "bin": {
     "didww-to-xai": "bin/install.js"
   },

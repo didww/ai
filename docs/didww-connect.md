@@ -2,7 +2,7 @@
 
 Use the **didww-connect** skill with **Claude Code** to put an AI voice agent on a DIDWW phone number when you have not yet chosen a voice platform. The skill compares the supported platforms against what matters to you, performs the DIDWW-side wiring that is identical for every platform, and hands over to the dedicated `didww-to-<platform>` skill once a platform is chosen.
 
-- Choose between ElevenLabs, Vapi, Retell, Ultravox, Vogent, OpenAI Realtime, xAI Grok and LiveKit in one question.
+- Choose between ElevenLabs, Vapi, Retell, Ultravox, Vogent, OpenAI (Realtime and GPT-Live), xAI Grok and LiveKit in one question.
 - Configure the DIDWW number, the inbound SIP trunk and digest authentication through the DIDWW MCP, and guide you through the outbound trunk and its spend limits in the DIDWW User Panel.
 - Monitor the finished connection with a read-only health check that runs from cron.
 
@@ -65,8 +65,9 @@ The skill asks one question, maps the answer to a platform, and tells you the au
 | API-first, EU region, bring your own model keys | Vapi | REST script; Vapi's MCP is read-only for numbers |
 | Maximum MCP automation, one-call setup | Retell | Retell's MCP imports numbers and creates agents |
 | Richest call transfers, own speech model | Ultravox | REST; address-based routing, no number import |
-| Small and simple | Vogent | REST import; agent binding is one dashboard click |
-| You own the agent code, minimal stack | OpenAI Realtime or xAI Grok | A webhook backend is required; not no-code |
+| Small and simple | Vogent | REST import and agent linking; the warm transfer type is one dashboard setting |
+| You own the agent code, minimal stack | OpenAI (Realtime for incoming calls, GPT-Live for outbound calls) | Your own backend is required (a webhook for incoming calls); not no-code |
+| Grok voice, incoming calls and transfers only | xAI Grok | A console voice agent; the number is added as Direct SIP in the console or with one REST call; no outbound calls |
 | Any STT, LLM and TTS combination, open source | LiveKit | REST script creates trunk and dispatch rule; the worker is your code |
 | Data control, own servers | LiveKit self-hosted | Same skill; you run the SIP service |
 | Enterprise procurement | Bland, Synthflow, Regal | Sales-gated; no same-day setup |
@@ -81,7 +82,7 @@ The skill asks one question, maps the answer to a platform, and tells you the au
 The number and the inbound trunk are configured through the DIDWW MCP under your own account permissions. Claude Code asks for confirmation before each tool call unless you have allowed that tool. The outbound trunk is created by you in the DIDWW User Panel, because the MCP has no outbound trunk tools.
 
 - **Inbound SIP trunk.** Host and port are the chosen platform's SIP ingress (see the table below), digest authentication is preferred over IP filtering, and media encryption matches the platform's setting. The DID is assigned to this trunk.
-- **Outbound SIP trunk.** Needed only for calls the agent places. You create it in the DIDWW User Panel under **Voice**, **Outbound Trunks**, **Create New**, because the DIDWW MCP has no outbound trunk tools. If that page shows **Get Access**, the account is not approved for outbound calling yet: the application needs a business account with a company name and VAT/TAX ID, and DIDWW replies within 48 business hours. The inbound side can go live meanwhile. Choose the **Credentials & IP-Based** authentication method. It needs at least one **Allowed SIP IP address**: the platform's SIP source addresses, listed on each platform's page. Where a platform publishes none, contact DIDWW support (support@didww.com). Do not enter `0.0.0.0/0`; DIDWW advises against open ranges. Set **Media encryption mode** to match the platform side. DIDWW generates the username and password; give them to the agent in a file or environment variables rather than pasting them into the chat, and it passes them to the platform side. Enable the trunk if it shows **Disabled**. The host is the one nearest to the platform's region: `nyc.us.out.didww.com`, `lac.us.out.didww.com`, `mia.us.out.didww.com`, `fra.eu.out.didww.com`, `ams.eu.out.didww.com`, `sg.out.didww.com` or `hk.out.didww.com`.
+- **Outbound SIP trunk.** Needed for calls the agent places and for transfers, and for Vogent always, because its number import needs the trunk's credentials. You create it in the DIDWW User Panel under **Voice**, **Outbound Trunks**, **Create New**, because the DIDWW MCP has no outbound trunk tools. If that page shows **Get Access**, the account is not approved for outbound calling yet: the application needs a business account with a company name and VAT/TAX ID, and DIDWW replies within 48 business hours. The inbound side can go live meanwhile. Choose the **Credentials & IP-Based** authentication method. It needs at least one **Allowed SIP IP address**: the platform's SIP source addresses, listed on each platform's page. Where a platform publishes none, contact DIDWW support (support@didww.com). Do not enter `0.0.0.0/0`; DIDWW advises against open ranges. For Vogent, whose warm transfers dial from its own servers, the [Vogent integration guide](https://doc.didww.com/integrations/vogent/index.html) allows `0.0.0.0/0` only for temporary testing, at your own risk: see [DIDWW to Vogent](didww-to-vogent.md). Set **Media encryption mode** to match the platform side. DIDWW generates the username and password; give them to the agent in a file or environment variables rather than pasting them into the chat, and it passes them to the platform side. Enable the trunk if it shows **Disabled**. The host is the one nearest to the platform's region: `nyc.us.out.didww.com`, `lac.us.out.didww.com`, `mia.us.out.didww.com`, `fra.eu.out.didww.com`, `ams.eu.out.didww.com`, `sg.out.didww.com` or `hk.out.didww.com`.
 - **Spend controls.** On the outbound trunk, under **Termination**: **24 Hour Limit (USD)** at its minimum of 50 (the default is 3000, and DIDWW disables the trunk when the limit is reached), **Capacity limit** matching the expected concurrency, and the usage limit notification on. Under **CLI Settings**, allow only the connected number as caller ID; under **Destination Dialing Settings**, reject all destinations except the countries the agent calls. On the inbound trunk the skill sets a capacity limit through the MCP.
 - **Number.** An existing DID is confirmed, or one is bought. For registration-required countries the skill says so before promising a date.
 
@@ -92,10 +93,10 @@ The number and the inbound trunk are configured through the DIDWW MCP under your
 | ElevenLabs | `sip.rtc.elevenlabs.io`, port 5060 | TCP or TLS, digest auth |
 | Vapi | `sip.vapi.ai` (EU: `sip.eu.vapi.ai`) | Vapi's inbound credential lists DIDWW's seven signaling IPs; Max transfers 1 for transfers |
 | Retell | `sip.retellai.com` | TCP |
-| Ultravox | The account's own SIP domain from `GET /api/sip` | Address-based routing to `agent_<id>@<domain>` |
-| Vogent | `sip.vogent.ai` | Digest auth |
-| OpenAI Realtime | `sip:{project_id}@sip.api.openai.com;transport=tls` | TLS and SRTP mandatory; EU host `sip-eu.api.openai.com` |
-| xAI Grok | `sip:{number}@sip.voice.x.ai;transport=tls` | Digest auth set when the number is registered with xAI |
+| Ultravox | The account's own SIP domain from `GET /api/sip`, port 5060, UDP | The dialed number (`{DID}`) is routed to an agent by a number pattern; codecs PCMU, PCMA and telephone-event. Transfers are SIP REFER to `sip:+{number}@{DIDWW outbound host}` through the outbound trunk, with its credentials on the inbound trunk. The outbound trunk allows Voximplant's published SIP servers and DIDWW's seven signaling IPs, with media encryption Disabled. See [DIDWW's Ultravox guide](https://doc.didww.com/integrations/ultravox/index.html) |
+| Vogent | `sip.vogent.ai`, port 5060, UDP | User Part of R-URI `{DID}` or `+{DID}`; Authorization with the outbound trunk's credentials; transfers only as Warm Transfer |
+| OpenAI (Realtime and GPT-Live) | `sip:{project_id}@sip.api.openai.com;transport=tls` | TLS and SRTP mandatory; EU host `sip-eu.api.openai.com`; the called number arrives in the Diversion header. Transfers are SIP REFER to `sip:+{number}@{DIDWW outbound host}` (not `tel:`) through the outbound trunk. GPT-Live outbound calls also use the outbound trunk, with SRTP SDES and OpenAI's ranges `13.79.45.80/28`, `23.98.140.64/28`, `40.67.149.176/28`, `40.83.204.240/28` in Allowed SIP IP addresses. See [DIDWW's OpenAI guide](https://doc.didww.com/integrations/openai/index.html) |
+| xAI Grok | `sip.voice.x.ai`, port 5061, TLS, User Part of R-URI `+{DID}` | The number is added to a console voice agent as Direct SIP, authenticated by the inbound trunk's credentials (digest) or by DIDWW's signaling IPs. G.711 with SRTP off. Transfers are SIP REFER to `sip:+{number}@{DIDWW outbound host}` through an outbound trunk with DIDWW's seven signaling IPs and media encryption Disabled. No outbound calls. See [DIDWW's xAI guide](https://doc.didww.com/integrations/xai/index.html) |
 | LiveKit | `sip:{sip_subdomain}.sip.livekit.cloud` (copy the SIP URI from Project settings) | 5060 TCP/UDP or 5061 TLS; region-pinned `{sip_subdomain}.{eu|us|uk|india|japan|aus|canada|sa}.sip.livekit.cloud`; numbers carry the `+` |
 
 ## Step 4. Verify the connection
@@ -127,7 +128,7 @@ It checks the balance against the threshold, lists DIDs and warns about blocked 
 
 ## Additional resources
 
-- Dedicated pairing skills: [ElevenLabs](didww-to-elevenlabs.md), [Vapi](didww-to-vapi.md), [Retell](didww-to-retell.md), [Ultravox](didww-to-ultravox.md), [Vogent](didww-to-vogent.md), [OpenAI Realtime](didww-to-openai-realtime.md), [xAI Grok](didww-to-xai.md), [LiveKit](didww-to-livekit.md).
+- Dedicated pairing skills: [ElevenLabs](didww-to-elevenlabs.md), [Vapi](didww-to-vapi.md), [Retell](didww-to-retell.md), [Ultravox](didww-to-ultravox.md), [Vogent](didww-to-vogent.md), [OpenAI (Realtime and GPT-Live)](didww-to-openai-realtime.md), [xAI Grok](didww-to-xai.md), [LiveKit](didww-to-livekit.md).
 - [Inbound trunks](https://doc.didww.com/voice/inbound-trunks/index.html) and [Outbound trunks](https://doc.didww.com/voice/outbound-trunks/index.html) in the DIDWW documentation.
 - [DIDWW MCP](https://doc.didww.com/mcp/index.html): the connector the skill uses for the carrier side.
 - Skill source and tests: [`skills/didww-connect`](https://github.com/didww/ai/tree/main/skills/didww-connect) in the didww/ai repository. Package: [npmjs.com/package/didww-connect](https://www.npmjs.com/package/didww-connect).

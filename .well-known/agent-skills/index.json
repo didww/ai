@@ -8,20 +8,20 @@
     {
       "name": "didww-connect",
       "type": "archive",
-      "description": "Connect a DIDWW phone number to ANY AI voice platform: helps choose the platform, then wires the SIP trunk pair and number. Use whenever the user wants a voice AI agent on a DIDWW number and has not committed to a platform, asks which AI platform to use with DIDWW, or names a platform that has no dedicated didww-to-X skill installed. Covers ElevenLabs, Vapi, Retell, Ultravox, Vogent, OpenAI Realtime, xAI, LiveKit and the enterprise-gated platforms.",
+      "description": "Connect a DIDWW phone number to ANY AI voice platform: helps choose the platform, then wires the SIP trunk pair and number. Use whenever the user wants a voice AI agent on a DIDWW number and has not committed to a platform, asks which AI platform to use with DIDWW, or names a platform that has no dedicated didww-to-X skill installed. Covers ElevenLabs, Vapi, Retell, Ultravox, Vogent, OpenAI (Realtime and GPT-Live), xAI, LiveKit and the enterprise-gated platforms.",
       "url": "didww-connect.tar.gz",
-      "digest": "sha256:50a913c53d738eeb409f565143d176998a04edd8008dcbdbf0777a056a52a9f5",
-      "version": "1.0.2",
+      "digest": "sha256:f1a8935f8d61feaf182ade2ede63cb406fa7302d416850dd6bb6ebc1a0d5c655",
+      "version": "1.0.6",
       "documentation": "https://github.com/didww/ai/blob/main/docs/didww-connect.md",
       "install": "npx didww-connect"
     },
     {
       "name": "didww-to-elevenlabs",
       "type": "archive",
-      "description": "Connect a DIDWW phone number to an ElevenLabs voice agent over SIP, as automatically as both platforms allow. Use whenever the user wants an ElevenLabs agent (Agents Platform, Conversational AI) on a real phone number via DIDWW, mentions pairing DIDWW with ElevenLabs, importing a SIP trunk into ElevenLabs, sip.rtc.elevenlabs.io, or debugging calls between the two. Covers inbound, outbound, transfers and verification.",
+      "description": "Connect a DIDWW phone number to an ElevenLabs voice agent over SIP, as automatically as both platforms allow. Use whenever the user wants an ElevenLabs agent (Agents Platform, Conversational AI) on a real phone number via DIDWW, mentions pairing DIDWW with ElevenLabs, importing a SIP trunk into ElevenLabs, sip.rtc.elevenlabs.io, live-agent transfers (SIP REFER), or debugging calls between the two. Covers inbound, outbound, transfers and verification.",
       "url": "didww-to-elevenlabs.tar.gz",
-      "digest": "sha256:522f41eada5f5e6269f9ea71de7452d13e57d077d11643abb6b222fc50bc1e9c",
-      "version": "1.1.0",
+      "digest": "sha256:fc1e6a0d8d0a1beeb47b5fd2eeb0eee7cf3757881c4481198b68830f7c706f7f",
+      "version": "1.1.1",
       "documentation": "https://github.com/didww/ai/blob/main/docs/didww-to-elevenlabs.md",
       "install": "npx didww-to-elevenlabs"
     },
@@ -38,10 +38,10 @@
     {
       "name": "didww-to-openai-realtime",
       "type": "archive",
-      "description": "Point a DIDWW phone number directly at OpenAI's Realtime API over SIP, with a generated webhook backend for call control. Use whenever the user wants gpt-realtime answering a real phone number via DIDWW, mentions sip.api.openai.com, realtime.call.incoming webhooks, Realtime SIP, or debugging calls between DIDWW and OpenAI. This is the developer-grade pairing: the agent behavior is code the user owns.",
+      "description": "Connect DIDWW phone numbers directly to OpenAI over SIP, in two separate setups the user chooses between: incoming calls answered by gpt-realtime (Realtime API, webhook backend, optional transfer to a live person), and outbound calls placed by GPT-Live (Live API) through a DIDWW outbound trunk with its username and password. Use whenever the user wants an OpenAI voice agent on a DIDWW number, mentions sip.api.openai.com, realtime.call.incoming webhooks, Realtime SIP, GPT-Live, gpt-live-1, /v1/live/sessions, outbound AI calls from OpenAI, or debugging calls between DIDWW and OpenAI. Developer-grade: the agent is code the user runs.",
       "url": "didww-to-openai-realtime.tar.gz",
-      "digest": "sha256:78f33de78d5aa29d849480e4df51c43802d738350a1d0403be725c808a190c25",
-      "version": "1.1.0",
+      "digest": "sha256:6978dd8f558859a8d47a04d8e60b65c3d89a8f7d8de7d94093b925b35501d54a",
+      "version": "1.2.0",
       "documentation": "https://github.com/didww/ai/blob/main/docs/didww-to-openai-realtime.md",
       "install": "npx didww-to-openai-realtime"
     },
@@ -60,8 +60,8 @@
       "type": "archive",
       "description": "Connect a DIDWW phone number to an Ultravox Realtime voice agent over SIP. Use whenever the user wants an Ultravox agent on a real phone number via DIDWW, mentions pairing DIDWW with Ultravox, an account SIP domain, agent_ addresses, allowedCidrRanges, or debugging calls between the two. Covers the address-based routing model that makes Ultravox different from every number-import platform.",
       "url": "didww-to-ultravox.tar.gz",
-      "digest": "sha256:fbf193be6f46d53965c42f9f086c8b6752885e7cb9497b3708df5bca6ed412e5",
-      "version": "1.1.0",
+      "digest": "sha256:511a721bd5f16cb4594d5a5559ae6aa08294fa86b13049dff7953190dde374ea",
+      "version": "1.1.1",
       "documentation": "https://github.com/didww/ai/blob/main/docs/didww-to-ultravox.md",
       "install": "npx didww-to-ultravox"
     },
@@ -78,20 +78,20 @@
     {
       "name": "didww-to-vogent",
       "type": "archive",
-      "description": "Connect a DIDWW phone number to a Vogent voice agent over SIP import. Use whenever the user wants a Vogent agent on a real phone number via DIDWW, mentions pairing DIDWW with Vogent, sip_import numbers, sip.vogent.ai, or debugging calls between the two.",
+      "description": "Connect a DIDWW phone number to a Vogent voice agent over SIP import. Use whenever the user wants a Vogent agent on a real phone number via DIDWW, mentions pairing DIDWW with Vogent, sip_import numbers, sip.vogent.ai, warm transfers from a Vogent agent to a live person, or debugging calls between the two.",
       "url": "didww-to-vogent.tar.gz",
-      "digest": "sha256:1c2227a36a7909cc0fd6c7ebe496c275070b466086a9e0c18614bd05b4df31bd",
-      "version": "1.0.2",
+      "digest": "sha256:2e757a041ae71ff66e4cd119c0b5c02bd41519218d0e68bc21411d3e4955b380",
+      "version": "1.0.3",
       "documentation": "https://github.com/didww/ai/blob/main/docs/didww-to-vogent.md",
       "install": "npx didww-to-vogent"
     },
     {
       "name": "didww-to-xai",
       "type": "archive",
-      "description": "Point a DIDWW phone number at xAI's Grok voice over SIP. Use whenever the user wants Grok answering a real phone number via DIDWW, mentions sip.voice.x.ai, xAI realtime calls, registering a phone number with xAI, or debugging calls between DIDWW and Grok. Developer-grade: agent behavior is configured per call over a websocket the user's code owns.",
+      "description": "Connect a DIDWW phone number to an xAI Grok Voice agent over SIP (xAI's docs and console now say SpaceXSI). Use whenever the user wants Grok answering a real phone number via DIDWW, mentions sip.voice.x.ai, xAI or Grok voice agents, the Voice Agent Builder, console.x.ai, a Direct SIP number, agent_id, realtime.call.incoming webhooks, or debugging calls between DIDWW and Grok. Covers incoming calls and transfers to a live person; xAI places no outbound calls.",
       "url": "didww-to-xai.tar.gz",
-      "digest": "sha256:7d9fbc775ed9718758b43a9afc93e3b8e020f77780fd9226b4c4dee65f0e6c79",
-      "version": "1.0.2",
+      "digest": "sha256:73a7197dfbaed43c815d782a72725e40550f941ddd6fa8c89cc3da963cd1cc20",
+      "version": "1.1.0",
       "documentation": "https://github.com/didww/ai/blob/main/docs/didww-to-xai.md",
       "install": "npx didww-to-xai"
     }

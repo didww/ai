@@ -19,4 +19,4 @@ cp -R "${SRC}/scripts" "${DEST}/scripts"
 [[ -d "${SRC}/references" ]] && cp -R "${SRC}/references" "${DEST}/references"
 find "$DEST" -name __pycache__ -type d -prune -exec rm -rf {} + 2>/dev/null || true
 chmod +x "${DEST}/scripts/"*.py 2>/dev/null || true
-echo; echo "Done. Restart Claude Code. It triggers on its own when you mention DIDWW together with OpenAI Realtime."
+echo; echo "Done. Restart Claude Code. It triggers on its own when you mention DIDWW together with OpenAI Realtime or GPT-Live."

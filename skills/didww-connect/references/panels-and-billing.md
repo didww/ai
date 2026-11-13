@@ -33,7 +33,9 @@ keys where a column says so.
 - Panel `elevenlabs.io/app`. Keys: `elevenlabs.io/app/settings/api-keys`
   (workspace Service Account keys: profile icon, Workspace settings,
   Service Accounts). Prefer the OAuth MCP
-  (`api.elevenlabs.io/v1/mcp`) for everything it covers.
+  (`https://api.us.elevenlabs.io/v1/mcp`) for everything it covers. Not
+  `api.elevenlabs.io/v1/mcp`: its OAuth metadata names the `api.us`
+  resource, and Claude Code then refuses to start sign-in.
 - Money: monthly SUBSCRIPTION tiers granting credits (Free includes 15
   agent minutes; Starter 6 USD/75 min; Creator 22 USD/275 min; Pro 99
   USD/1,238 min). Extra agent minutes about 0.08 USD; concurrency above
@@ -79,31 +81,47 @@ keys where a column says so.
 
 ## Vogent
 
-- Panel `app.vogent.ai`. Keys: API Keys page in the sidebar. No MCP.
+- Panel `app.vogent.ai`. Keys: API tab in the sidebar, Keys, New Key;
+  copy the secret (the UUID in the key list is the key's ID and gets
+  "unauthorized"). No MCP. Dial History shows each call's transcript;
+  `GET /api/dials/{id}` returns it, but the API cannot list dials.
 - Money: per-minute, around 0.09 USD/min per their marketing, but there
   is NO public pricing page; verify actual rates inside the panel before
   the user scales anything.
 
-## OpenAI (Realtime SIP)
+## OpenAI (Realtime SIP, GPT-Live)
 
 - Panel `platform.openai.com`. Keys: `/api-keys`. Webhooks:
-  `/settings/project/webhooks` (create, copy the signing secret).
+  `/settings/project/webhooks` (create, copy the signing secret);
+  creating one needs the Webhooks write permission
+  (`api.webhooks.write`) from the project owner.
+- A Restricted key with only Realtime (`/v1/realtime`) set to Request
+  was enough for incoming calls, transfers and GPT-Live outbound calls.
+  GPT-Live outbound (`gpt-live-1`) also needs outbound SIP enabled for
+  the organization; otherwise `403 outbound_sip_not_enabled`.
 - Money: PREPAID credits, Settings then Billing, minimum purchase 5 USD.
   Auto-recharge defaults to ON during setup; credits EXPIRE after one
   year, non-refundable. Realtime bills in audio tokens, not minutes
   (about 600 tokens/min heard, 1,200/min spoken); a typical phone
   conversation lands around 0.05 to 0.10 USD/min of model cost depending
-  on talk ratio.
+  on talk ratio. DIDWW bills outbound calls and every transfer leg per
+  minute at the outbound rate on top of that.
 - Gotcha: the expiry and default auto-recharge surprise people; say both
   out loud during setup.
 
 ## xAI (Grok voice)
 
-- Panel `console.x.ai`. Keys: API Keys page. Billing: Billing, API spend
-  management (buy credits), Billing details for the card.
-- Money: PREPAID credits, minimum top-up 25 USD, no free credits
-  documented; calls hard-fail the instant credits hit zero unless auto
-  top-up is configured (threshold, amount, monthly cap).
+- Panel `console.x.ai` (now branded SpaceXSI). Keys: API Keys page, key
+  type **Grok API** (not Cursor); no Grok API key until a payment method
+  is on file. Billing: Billing, API spend management (buy credits),
+  Billing details for the card. Voice agents: Voice Agents; the agent ID
+  (`agent_...`) is in the address bar, as there is no agents API for new
+  teams (`GET /v1/agents` 403).
+- Money: PREPAID credits, non-refundable, no free credits documented;
+  voice 0.08 USD/min (grok-voice-3.0); calls are rejected the instant
+  credits hit zero unless auto top-up is configured (threshold, an
+  amount of at least 5 USD, monthly cap). Invoiced billing is off by
+  default.
 
 ## LiveKit (Cloud or self-hosted)
 
