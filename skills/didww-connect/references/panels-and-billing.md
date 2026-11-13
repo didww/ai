@@ -111,11 +111,17 @@ keys where a column says so.
 
 ## xAI (Grok voice)
 
-- Panel `console.x.ai`. Keys: API Keys page. Billing: Billing, API spend
-  management (buy credits), Billing details for the card.
-- Money: PREPAID credits, minimum top-up 25 USD, no free credits
-  documented; calls hard-fail the instant credits hit zero unless auto
-  top-up is configured (threshold, amount, monthly cap).
+- Panel `console.x.ai` (now branded SpaceXSI). Keys: API Keys page, key
+  type **Grok API** (not Cursor); no Grok API key until a payment method
+  is on file. Billing: Billing, API spend management (buy credits),
+  Billing details for the card. Voice agents: Voice Agents; the agent ID
+  (`agent_...`) is in the address bar, as there is no agents API for new
+  teams (`GET /v1/agents` 403).
+- Money: PREPAID credits, non-refundable, no free credits documented;
+  voice 0.08 USD/min (grok-voice-3.0); calls are rejected the instant
+  credits hit zero unless auto top-up is configured (threshold, an
+  amount of at least 5 USD, monthly cap). Invoiced billing is off by
+  default.
 
 ## LiveKit (Cloud or self-hosted)
 

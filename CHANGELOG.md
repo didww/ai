@@ -2,6 +2,31 @@
 
 All notable changes to the skills in this repository. Each skill is versioned independently in its `package.json`.
 
+## didww-to-xai 1.1.0, didww-connect 1.0.6 (2026-11-13)
+
+Aligned with DIDWW's [xAI integration guide](https://doc.didww.com/integrations/xai/index.html) and verified on real calls through DIDWW with the skill: an incoming call answered by an xAI console voice agent and a transfer to a live person by SIP REFER. The skill's new section 8 lists the live test results.
+
+- **Console voice agents.** The skill said xAI has no stored agent, so every call needed your own webhook backend. xAI's console now has voice agents, and a number added with `agent_id` routes to one with no server. That is now the default setup (DIDWW's guide). The webhook backend stays as the developer option, and the skill asks which one first.
+- **`register_number.py`:**
+  - `--agent agent_...` routes the number to a console agent; `--webhook` remains, and exactly one is required;
+  - `--digest` reads the SIP pair from `--env-file` (the DIDWW outbound trunk's credentials file), so no password passes through argv or the chat;
+  - `--allow-didww` sets DIDWW's seven signaling IPs;
+  - `--list` and `--delete` manage registered numbers;
+  - the number must be E.164 with `+`;
+  - the one-time secret file is written only for `--webhook`.
+- **DIDWW trunk settings from the guide:** inbound trunk to `sip.voice.x.ai` on 5061 over TLS, User Part of R-URI `+{DID}`, IPv4, PCMU/PCMA/telephone-event, SRTP Disable, Max Transfers 1. The skill had no transfer steps and said no outbound trunk is involved. Transfers need one: DIDWW's seven signaling IPs, media encryption Disabled, the destination allowed, and its credentials on the inbound trunk's Authorization.
+- **Transfer target `sip:`, not `tel:`.** The skill told the backend to refer to a `tel:` target, which DIDWW rejects. The console tool and the backend now use `sip:+{number}@{DIDWW outbound host}`.
+- **No outbound calls:** xAI has no API to place calls and publishes no SIP source addresses. The skill says so in intake.
+- **Account facts:**
+  - the key type must be Grok API, not Cursor, and xAI creates none until a payment method is on file;
+  - auto top-ups are at least 5 USD (the skill said a 25 USD minimum);
+  - credits are non-refundable;
+  - voice costs 0.08 USD/min;
+  - the agent ID comes from the console, because `GET /v1/agents` answers 403 for new teams.
+- **New failure-map rows:** a transfer "declined" (a destination the outbound trunk does not allow), a transfer reaching voicemail, a transfer looping back to the agent's own number, silence with Welcome message off, and no API key.
+- `tests/test_register_number.py` now has 35 checks: the agent and webhook bodies, `--digest` from a file without printing the password, `--allow-didww`, the refusals, `--list` and `--delete`.
+- **`didww-connect`:** xAI gets its own row in the chooser (console agent, incoming and transfers only), the ingress notes and outbound Allowed SIP IPs (it said "no outbound trunk needed"), and the billing facts in `references/panels-and-billing.md`. `docs/didww-to-xai.md`, `docs/didww-connect.md` and the family tables match.
+
 ## didww-to-ultravox 1.1.1, didww-connect 1.0.5 (2026-11-10)
 
 Found while connecting a DIDWW number to an Ultravox agent with the skill, and verified on real calls: an incoming call, a SIP REFER transfer to a live number, and an outgoing call through a DIDWW outbound trunk. The skill now links DIDWW's [Ultravox integration guide](https://doc.didww.com/integrations/ultravox/index.html) and follows it.

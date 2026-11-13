@@ -66,7 +66,8 @@ The skill asks one question, maps the answer to a platform, and tells you the au
 | Maximum MCP automation, one-call setup | Retell | Retell's MCP imports numbers and creates agents |
 | Richest call transfers, own speech model | Ultravox | REST; address-based routing, no number import |
 | Small and simple | Vogent | REST import and agent linking; the warm transfer type is one dashboard setting |
-| You own the agent code, minimal stack | OpenAI (Realtime for incoming calls, GPT-Live for outbound calls) or xAI Grok | Your own backend is required (a webhook for incoming calls); not no-code |
+| You own the agent code, minimal stack | OpenAI (Realtime for incoming calls, GPT-Live for outbound calls) | Your own backend is required (a webhook for incoming calls); not no-code |
+| Grok voice, incoming calls and transfers only | xAI Grok | A console voice agent; the number is added as Direct SIP in the console or with one REST call; no outbound calls |
 | Any STT, LLM and TTS combination, open source | LiveKit | REST script creates trunk and dispatch rule; the worker is your code |
 | Data control, own servers | LiveKit self-hosted | Same skill; you run the SIP service |
 | Enterprise procurement | Bland, Synthflow, Regal | Sales-gated; no same-day setup |
@@ -95,7 +96,7 @@ The number and the inbound trunk are configured through the DIDWW MCP under your
 | Ultravox | The account's own SIP domain from `GET /api/sip`, port 5060, UDP | The dialed number (`{DID}`) is routed to an agent by a number pattern; codecs PCMU, PCMA and telephone-event. Transfers are SIP REFER to `sip:+{number}@{DIDWW outbound host}` through the outbound trunk, with its credentials on the inbound trunk. The outbound trunk allows Voximplant's published SIP servers and DIDWW's seven signaling IPs, with media encryption Disabled. See [DIDWW's Ultravox guide](https://doc.didww.com/integrations/ultravox/index.html) |
 | Vogent | `sip.vogent.ai`, port 5060, UDP | User Part of R-URI `{DID}` or `+{DID}`; Authorization with the outbound trunk's credentials; transfers only as Warm Transfer |
 | OpenAI (Realtime and GPT-Live) | `sip:{project_id}@sip.api.openai.com;transport=tls` | TLS and SRTP mandatory; EU host `sip-eu.api.openai.com`; the called number arrives in the Diversion header. Transfers are SIP REFER to `sip:+{number}@{DIDWW outbound host}` (not `tel:`) through the outbound trunk. GPT-Live outbound calls also use the outbound trunk, with SRTP SDES and OpenAI's ranges `13.79.45.80/28`, `23.98.140.64/28`, `40.67.149.176/28`, `40.83.204.240/28` in Allowed SIP IP addresses. See [DIDWW's OpenAI guide](https://doc.didww.com/integrations/openai/index.html) |
-| xAI Grok | `sip:{number}@sip.voice.x.ai;transport=tls` | Digest auth set when the number is registered with xAI |
+| xAI Grok | `sip.voice.x.ai`, port 5061, TLS, User Part of R-URI `+{DID}` | The number is added to a console voice agent as Direct SIP, authenticated by the inbound trunk's credentials (digest) or by DIDWW's signaling IPs. G.711 with SRTP off. Transfers are SIP REFER to `sip:+{number}@{DIDWW outbound host}` through an outbound trunk with DIDWW's seven signaling IPs and media encryption Disabled. No outbound calls. See [DIDWW's xAI guide](https://doc.didww.com/integrations/xai/index.html) |
 | LiveKit | `sip:{sip_subdomain}.sip.livekit.cloud` (copy the SIP URI from Project settings) | 5060 TCP/UDP or 5061 TLS; region-pinned `{sip_subdomain}.{eu|us|uk|india|japan|aus|canada|sa}.sip.livekit.cloud`; numbers carry the `+` |
 
 ## Step 4. Verify the connection

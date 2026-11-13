@@ -10,8 +10,8 @@
       "type": "archive",
       "description": "Connect a DIDWW phone number to ANY AI voice platform: helps choose the platform, then wires the SIP trunk pair and number. Use whenever the user wants a voice AI agent on a DIDWW number and has not committed to a platform, asks which AI platform to use with DIDWW, or names a platform that has no dedicated didww-to-X skill installed. Covers ElevenLabs, Vapi, Retell, Ultravox, Vogent, OpenAI (Realtime and GPT-Live), xAI, LiveKit and the enterprise-gated platforms.",
       "url": "didww-connect.tar.gz",
-      "digest": "sha256:f2e1f687f5f1d7344114e6d16f1f36e926ba1392ad58577bfc8c3415826d6e70",
-      "version": "1.0.5",
+      "digest": "sha256:f1a8935f8d61feaf182ade2ede63cb406fa7302d416850dd6bb6ebc1a0d5c655",
+      "version": "1.0.6",
       "documentation": "https://github.com/didww/ai/blob/main/docs/didww-connect.md",
       "install": "npx didww-connect"
     },
@@ -88,10 +88,10 @@
     {
       "name": "didww-to-xai",
       "type": "archive",
-      "description": "Point a DIDWW phone number at xAI's Grok voice over SIP. Use whenever the user wants Grok answering a real phone number via DIDWW, mentions sip.voice.x.ai, xAI realtime calls, registering a phone number with xAI, or debugging calls between DIDWW and Grok. Developer-grade: agent behavior is configured per call over a websocket the user's code owns.",
+      "description": "Connect a DIDWW phone number to an xAI Grok Voice agent over SIP (xAI's docs and console now say SpaceXSI). Use whenever the user wants Grok answering a real phone number via DIDWW, mentions sip.voice.x.ai, xAI or Grok voice agents, the Voice Agent Builder, console.x.ai, a Direct SIP number, agent_id, realtime.call.incoming webhooks, or debugging calls between DIDWW and Grok. Covers incoming calls and transfers to a live person; xAI places no outbound calls.",
       "url": "didww-to-xai.tar.gz",
-      "digest": "sha256:7d9fbc775ed9718758b43a9afc93e3b8e020f77780fd9226b4c4dee65f0e6c79",
-      "version": "1.0.2",
+      "digest": "sha256:73a7197dfbaed43c815d782a72725e40550f941ddd6fa8c89cc3da963cd1cc20",
+      "version": "1.1.0",
       "documentation": "https://github.com/didww/ai/blob/main/docs/didww-to-xai.md",
       "install": "npx didww-to-xai"
     }

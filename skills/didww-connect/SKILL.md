@@ -30,7 +30,8 @@ Ask what matters most and map:
 | Max MCP automation, one-call setup | Retell | Their MCP imports numbers and creates agents |
 | Richest transfers, own speech model | Ultravox | REST; address-based routing, no number import |
 | Small and simple | Vogent | REST import and agent linking; warm transfer type is one dashboard setting |
-| Developer owns the brain, minimal stack | OpenAI (Realtime incoming, GPT-Live outbound) or xAI | Own backend required (a webhook for incoming calls), not no-code |
+| Developer owns the brain, minimal stack | OpenAI (Realtime incoming, GPT-Live outbound) | Own backend required (a webhook for incoming calls), not no-code |
+| Grok voice, incoming calls and transfers only | xAI | Console voice agent, number added as Direct SIP (console or one REST call); no outbound calls |
 | Any STT/LLM/TTS combination (Claude as the brain), open source | LiveKit | REST script creates trunk + dispatch rule; the worker is code |
 | Enterprise procurement in play | Bland, Synthflow, Regal | Sales-gated; never promise same-day |
 | Data control, own servers | LiveKit self-hosted | didww-to-livekit for the wiring; voice-agent-telephony for the agent |
@@ -109,8 +110,13 @@ mandatory, webhook backend is the gate; the called DID arrives in
 GPT-Live outbound calls dial `sips:{DIDWW outbound host}:5061` with the
 outbound trunk's pair; DIDWW's guide
 `doc.didww.com/integrations/openai/`). xAI
-`sip:{number}@sip.voice.x.ai;transport=tls` (digest via number
-registration). LiveKit `sip:{sip_subdomain}.sip.livekit.cloud` (the SIP URI
+`sip.voice.x.ai`, port 5061, TLS, R-URI `+{DID}`, IPv4, G.711, SRTP
+off (the number is added to a console voice agent as Direct SIP, auth
+by digest = the inbound trunk's Authorization pair or by DIDWW's seven
+signaling IPs; transfers by SIP REFER to
+`sip:+{number}@{DIDWW outbound host}` with `max_transfers` 1 and the
+outbound trunk's pair on the inbound trunk; no outbound calls; DIDWW's
+guide `doc.didww.com/integrations/xai/`). LiveKit `sip:{sip_subdomain}.sip.livekit.cloud` (the SIP URI
 from Project settings, not derived from the project URL; 5060
 TCP/UDP, 5061 TLS, digest; region-pinned
 `{sip_subdomain}.{eu|us|uk|india|japan|aus|canada|sa}.sip.livekit.cloud`;
@@ -139,8 +145,10 @@ nothing). OpenAI: transfers need DIDWW's seven inbound signaling IPs;
 GPT-Live outbound calls also need OpenAI's `13.79.45.80/28`,
 `23.98.140.64/28`, `40.67.149.176/28`, `40.83.204.240/28` (published as
 SRTP media ranges; without them 403 Forbidden), and both need media
-encryption SRTP SDES on the trunk (else 500 No suitable media). xAI: no
-outbound trunk needed.
+encryption SRTP SDES on the trunk (else 500 No suitable media). xAI:
+places no calls, so the outbound trunk is only for transfers: DIDWW's
+seven inbound signaling IPs, media encryption Disabled, and the
+destinations transfers go to (a disallowed one is "declined").
 
 ## Panels, keys and money
 

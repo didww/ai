@@ -23,7 +23,7 @@ Open-source tools from [DIDWW](https://www.didww.com/) for building AI voice age
 | [didww-to-ultravox](skills/didww-to-ultravox) | Ultravox | [![npm](https://img.shields.io/npm/v/didww-to-ultravox?label=)](https://www.npmjs.com/package/didww-to-ultravox) | Address-based routing and account SIP settings |
 | [didww-to-vogent](skills/didww-to-vogent) | Vogent | [![npm](https://img.shields.io/npm/v/didww-to-vogent?label=)](https://www.npmjs.com/package/didww-to-vogent) | SIP import and agent linking; warm transfer type is one dashboard setting |
 | [didww-to-openai-realtime](skills/didww-to-openai-realtime) | OpenAI (Realtime and GPT-Live) | [![npm](https://img.shields.io/npm/v/didww-to-openai-realtime?label=)](https://www.npmjs.com/package/didww-to-openai-realtime) | Direct SIP: incoming calls through the Realtime API with a webhook backend and transfers, outbound calls with GPT-Live |
-| [didww-to-xai](skills/didww-to-xai) | xAI Grok | [![npm](https://img.shields.io/npm/v/didww-to-xai?label=)](https://www.npmjs.com/package/didww-to-xai) | Number registration with digest auth, per-call session control |
+| [didww-to-xai](skills/didww-to-xai) | xAI Grok | [![npm](https://img.shields.io/npm/v/didww-to-xai?label=)](https://www.npmjs.com/package/didww-to-xai) | Console voice agent with a Direct SIP number (or your own backend), incoming calls and transfers |
 | [didww-to-livekit](skills/didww-to-livekit) | LiveKit | [![npm](https://img.shields.io/npm/v/didww-to-livekit?label=)](https://www.npmjs.com/package/didww-to-livekit) | Inbound trunk, dispatch rule and optional outbound trunk for a LiveKit worker |
 
 ### Install
